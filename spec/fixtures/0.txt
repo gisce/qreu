@@ -1,0 +1,62 @@
+                                                                                                                                                                                                                                                               
+Delivered-To: user@example1.com
+Received: by 127.200.52.48 with SMTP id u45csp415925qtb;
+        Thu, 30 Jun 2016 09:07:54 -0700 (PDT)
+X-Received: by 127.129.155.134 with SMTP id s128mr7089228ywg.103.1467302874766;
+        Thu, 30 Jun 2016 09:07:54 -0700 (PDT)
+Return-Path: <noreply@git.example.com>
+Received: from git.example-smtp2b-ext-cp1-prd.iad.git.example.net (git.example-smtp2-ext2.iad.git.example.net. [127.30.252.193])
+        by mx.example-isp.com with ESMTPS id t68si2944394qka.257.2127.06.30.09.07.54
+        for <user@example1.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Jun 2016 09:07:54 -0700 (PDT)
+Received-SPF: pass (example-isp.com: domain of noreply@git.example.com designates 127.30.252.193 as permitted sender) client-ip=127.30.252.193;
+Authentication-Results: mx.example-isp.com;
+       dkim=pass (test mode) header.i=@git.example.com;
+       spf=pass (example-isp.com: domain of noreply@git.example.com designates 127.30.252.193 as permitted sender) smtp.mailfrom=noreply@git.example.com;
+       dmarc=pass (p=NONE dis=NONE) header.from=git.example.com
+Date: Thu, 30 Jun 2016 09:07:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=git.example.com;
+	s=pf2014; t=1467302874;
+	bh=lSLDLPyNj8Coc3VKUfrFiM+pz2twuDLk0nOp5iBGrBs=;
+	h=From:Reply-To:To:Cc:Subject:List-ID:List-Archive:List-Post:
+	 List-Unsubscribe:From;
+	b=reHWuRHRhW2zkXwc6F8cpntz1S0yx756Y9y/QnLs5ZaJNGO0NPL2chTFl0Gb9o0ip
+	 HDjTIHaQbqicAzwujTdt25NfArVOMGTqmtcIUXdyBxQ3XIoSUXitwOC2VSyqpRRIhx
+	 R4Cl1kcocL7bolMw21lDEFoP+OuoXmp9DycPSa9M=
+From: User <notifications@git.example.com>
+Reply-To: gisce/qreu <reply+123456789qwertyuiopasdfghjklzxcvbnm@reply.git.example.com>
+To: gisce/qreu <qreu@noreply.git.example.com>
+Cc: 
+Message-ID: <gisce/qreu/pull/5@git.example.com>
+Subject: Lorem ipsum dolor sit amet
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--==_mimepart_577543da3e631_8003f915437f29c675196";
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Precedence: list
+List-ID: gisce/qreu <qreu.gisce.git.example.com>
+List-Archive: https://git.example.com/gisce/qreu
+List-Post: <mailto:reply+123456789qwertyuiopasdfghjklzxcvbnm@reply.git.example.com>
+List-Unsubscribe: <mailto:unsub+123456789qwertyuiopasdfghjklzxcvbnm@reply.git.example.com>,
+ <https://git.example.com/notifications/unsubscribe/AAR9W0JyK-6AaCcT6VH7idEUpHuoVOgVks5qQ-nagaJpZM4JCUsn>
+
+
+
+
+----==_mimepart_577543da3e631_8003f915437f29c675196
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+This is the body
+
+----==_mimepart_577543da3e631_8003f915437f29c675196
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+This is the <b>body</b>
+
+----==_mimepart_577543da3e631_8003f915437f29c675196--

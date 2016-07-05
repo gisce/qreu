@@ -1,0 +1,55 @@
+                                                                                                                                                                                                                                                               
+Delivered-To: user@example.com
+Received: by 127.200.52.48 with SMTP id u45csp332259qtb;
+        Thu, 30 Jun 2016 06:11:53 -0700 (PDT)
+X-Received: by 127.107.154.210 with SMTP id c201mr13933329ioe.99.1467292313817;
+        Thu, 30 Jun 2016 06:11:53 -0700 (PDT)
+Return-Path: <user2@example.com>
+Received: from mail-io0-x231.isp.example.com (mail-io0-x231.isp.example.com. [2607:f8b0:4001:c06::231])
+        by mx.isp.example.com with ESMTPS id 16si4406062ith.29.2127.06.30.06.11.53
+        for <user@example.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Jun 2016 06:11:53 -0700 (PDT)
+Received-SPF: neutral (isp.example.com: 2607:f8b0:4001:c06::231 is neither permitted nor denied by best guess record for domain of user2@example.com) client-ip=2607:f8b0:4001:c06::231;
+Authentication-Results: mx.isp.example.com;
+       dkim=pass header.i=@example-net.20150623.gappssmtp.com;
+       spf=neutral (isp.example.com: 2607:f8b0:4001:c06::231 is neither permitted nor denied by best guess record for domain of user2@example.com) smtp.mailfrom=user2@example.com
+Received: by mail-io0-x231.isp.example.com with SMTP id f30so71007314ioj.2
+        for <user@example.com>; Thu, 30 Jun 2016 06:11:53 -0700 (PDT)
+MIME-Version: 1.0
+X-Received: by 127.107.181.137 with SMTP id e131mr16463820iof.88.1467292312955;
+ Thu, 30 Jun 2016 06:11:52 -0700 (PDT)
+Received: by 127.107.137.94 with HTTP; Thu, 30 Jun 2016 06:11:52 -0700 (PDT)
+Received: by 127.107.137.94 with HTTP; Thu, 30 Jun 2016 06:11:52 -0700 (PDT)
+In-Reply-To: <003901d1d2d0$5fde26c0$1f9a7440$@client.example.com>
+References: <001f01d1d29d$69440960$3bcc1c20$@client.example.com>
+	<CA+y8Mvn42Yn2B4GOaZOMQ3TwNLwC7u24FBp26moih2RFjzUeEA@mail.mailservice.example.com>
+	<CA+y8Mv=H0YsjToZJ36fhNYT=0X5g2LapQzUidH-+Q-MkMP_15Q@mail.mailservice.example.com>
+	<CA+y8Mvk4ThFSS_1tQGS9UsfL8T8grEc2WSQSb5rsdFBTspP9NQ@mail.mailservice.example.com>
+	<003901d1d2d0$5fde26c0$1f9a7440$@client.example.com>
+Date: Thu, 30 Jun 2016 15:11:52 +0200
+Message-ID: <CA+y8Mv=xtt4NCYhP+LxF=WDjd8dayb=MKsuV7AqnStMfTxrpSg@mail.mailservice.example.com>
+Subject: Fwd: RE: tema Mesures - barbastro
+From: User 2 <user2@example.com>
+To: User <user@example.com>
+Content-Type: multipart/related; boundary=001a1144495819635205367e9d12
+
+--001a1144495819635205367e9d12
+Content-Type: multipart/alternative; boundary=001a1144495819634e05367e9d11
+
+--001a1144495819634e05367e9d11
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+---------- Missatge reenviat ----------
+De: "Client" <user@client.example.com>
+Data: 30 juny 2016 3:06 p. m.
+Assumpte: RE: tema Mesures - barbastro
+Per a: "User 2" <user2@example.com>
+Cc:
+
+Bones,
+
+Si es ok, queda confirma=E2=80=99t pel 12.
+
+Merci!

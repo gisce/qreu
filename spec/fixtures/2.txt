@@ -1,0 +1,215 @@
+                                                                                                                                                                                                                                                               
+Delivered-To: user@example.com
+Received: by 127.200.52.48 with SMTP id u45csp46741qtb;
+        Fri, 1 Jul 2016 02:57:20 -0700 (PDT)
+X-Received: by 127.157.6.3 with SMTP id 3mr12990583otn.143.1467367040326;
+        Fri, 01 Jul 2016 02:57:20 -0700 (PDT)
+Return-Path: <crm+bncBD62326O2MKRB7743C5QKGQE2ZKRMMA@example.com>
+Received: from mail-ob0-x246.isp.example.com (mail-ob0-x246.isp.example.com. [2607:f8b0:4003:c01::246])
+        by mx.isp.example.com with ESMTPS id z67si1232796oiz.283.2127.07.01.02.57.20
+        for <user@example.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Jul 2016 02:57:20 -0700 (PDT)
+Received-SPF: neutral (isp.example.com: 2607:f8b0:4003:c01::246 is neither permitted nor denied by best guess record for domain of crm+bncbd62326o2mkrb7743c5qkgqe2zkrmma@example.com) client-ip=2607:f8b0:4003:c01::246;
+Authentication-Results: mx.isp.example.com;
+       dkim=pass header.i=@example.com.20150623.gappssmtp.com;
+       spf=neutral (isp.example.com: 2607:f8b0:4003:c01::246 is neither permitted nor denied by best guess record for domain of crm+bncbd62326o2mkrb7743c5qkgqe2zkrmma@example.com) smtp.mailfrom=crm+bncBD62326O2MKRB7743C5QKGQE2ZKRMMA@example.com
+Received: by mail-ob0-x246.isp.example.com with SMTP id fq2sf222743285obb.2
+        for <user@example.com>; Fri, 01 Jul 2016 02:57:20 -0700 (PDT)
+        Fri, 01 Jul 2016 02:57:19 -0700 (PDT)
+Received: by 127.157.16.82 with SMTP id o18ls1482048oto.84.mail.example; Fri, 01 Jul
+ 2016 02:57:19 -0700 (PDT)
+        Fri, 01 Jul 2016 02:57:19 -0700 (PDT)
+Received: from o50314941.outbound-mail.sendgrid.net (o50314941.outbound-mail.sendgrid.net. [127.31.49.41])
+        by mx.isp.example.com with ESMTPS id 69si1252073otu.151.2127.07.01.02.57.17
+        for <crm@example.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Jul 2016 02:57:19 -0700 (PDT)
+Received-SPF: pass (isp.example.com: domain of bounces+2876816-d4e3-crm=example.com@mailing.example.com designates 127.31.49.41 as permitted sender) client-ip=127.31.49.41;
+Received: by filter0462p1mdw1.sendgrid.net with SMTP id filter0462p1mdw1.11189.57763E7322
+        2016-07-01 09:57:07.859371411 +0000 UTC
+Received: from formiga.example.lan (127.184.3.75.static.user.ono.com [127.184.3.75])
+	by ismtpd0004p1lon1.sendgrid.net (SG) with ESMTP id WeEPrRirTh-7ILO4Olhgkw
+	Fri, 01 Jul 2016 09:57:07.475 +0000 (UTC)
+Delivered-To: examplesoa@mail.example.com
+Received: from mail.example-imap.l.isp.example.com [127.125.133.108]
+	by formiga.example.lan with IMAP (fetchmail-6.3.9-rc2)
+	for <erp@localhost> (single-drop);
+	Fri, 01 Jul 2016 11:57:03 +0200 (CEST)
+Received: by 127.37.88.66 with SMTP id m63csp150887ybb; Fri, 1 Jul 2016
+	02:54:38 -0700 (PDT)
+	Fri, 01 Jul 2016 02:54:38 -0700 (PDT)
+Received: from mail-lf0-x245.isp.example.com (mail-lf0-x245.isp.example.com.
+	[2a00:1450:4010:c07::245]) by mx.isp.example.com with ESMTPS id
+	g87si557901lji.51.2127.07.01.02.54.38 for <examplesoa@mail.example.com>
+	(version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+	Fri, 01 Jul 2016 02:54:38 -0700 (PDT)
+Received-SPF: neutral (isp.example.com: 2a00:1450:4010:c07::245 is neither
+	permitted nor denied by best guess record for domain of
+	erp+bncbaabbxp33c5qkgqeunerkfa@soporte.example.com)
+	client-ip=2a00:1450:4010:c07::245;
+Received: by mail-lf0-x245.isp.example.com with SMTP id a4sf77815541lfa.1 for
+	<examplesoa@mail.example.com>; Fri, 01 Jul 2016 02:54:38 -0700 (PDT)
+	01 Jul 2016 02:54:37 -0700 (PDT)
+Received: by 127.28.14.75 with SMTP id 72ls295261wmo.47.mail.example; Fri, 01 Jul 2016
+	02:54:37 -0700 (PDT)
+	Fri, 01 Jul 2016 02:54:37 -0700 (PDT)
+Received: from W2008R2SPAN-0.home (host.aguasdebarbastro.es. [127.15.78.148])
+	by mx.isp.example.com with ESMTP id
+	be10si2881890wjb.254.2127.07.01.02.54.36 for
+	<erp@soporte.example.com>; Fri, 01 Jul 2016 02:54:37 -0700 (PDT)
+Received-SPF: pass (isp.example.com: domain of user@client.example.com designates
+	127.15.78.148 as permitted sender) client-ip=127.15.78.148;
+Received: from AguasBCN14p ([127.4.87.233]) by home with MailEnable ESMTP;
+	Fri, 1 Jul 2016 11:43:50 +0200
+From: =?iso-8859-1?Q?Ferran_Ca=F1amares?= <user@client.example.com>
+References: <004e01d1d37e$6b385910$41a90b30$@client.example.com>
+In-Reply-To: <004e01d1d37e$6b385910$41a90b30$@client.example.com>
+Date: Fri, 1 Jul 2016 11:55:38 +0200
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_005B_01D1D38F.7C50F700"
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQFSZUqBB0EhojGoNOmzqg57hEwsm6ECMqKw
+Content-Language: es
+Precedence: list
+Mailing-list: list crm@example.com; contact crm+owners@example.com
+List-ID: <crm.example.com>
+List-Post: <https://groups.isp.example.com/a/example.com/group/crm/post>, <mailto:crm@example.com>
+List-Help: <https://support.isp.example.com/a/example.com/bin/topic.py?topic=25838>, <mailto:crm+help@example.com>
+List-Archive: <https://groups.isp.example.com/a/example.com/group/crm/>
+List-Unsubscribe: <mailto:isp.examplegroups-manage+818783561375+unsubscribe@isp.examplegroups.com>,
+ <https://groups.isp.example.com/a/example.com/group/crm/subscribe>
+Subject: RV: 2 error al pagar remesa 2
+Message-ID: <1467367026.38-tinycrm-135200@formiga>
+To: erp@suport.example.com
+Cc: crm@example.com
+Reply-To: erp@soporte.example.com
+
+This is a multipart message in MIME format.
+------=_NextPart_000_005B_01D1D38F.7C50F700
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_005C_01D1D38F.7C50F700"
+
+------=_NextPart_001_005C_01D1D38F.7C50F700
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Bones,
+
+=20
+
+Aquest cas ja est=E0 resolt.
+
+=20
+
+
+------=_NextPart_001_005C_01D1D38F.7C50F700
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; charset=3Diso-8859-=
+1">
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40"><head><meta name=3DGenerator content=3D"Microso=
+ft Word 14 (filtered medium)"><!--[if !mso]><style>v\:* {behavior:url(#defa=
+ult#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:"Myriad Pro";
+	panose-1:2 11 5 3 3 4 3 2 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+@font-face
+	{font-family:"Gill Sans MT";
+	panose-1:2 11 5 2 2 1 4 2 2 3;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-priority:99;
+	mso-style-link:"Texto de globo Car";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";
+	mso-fareast-language:EN-US;}
+p.msonormal0, li.msonormal0, div.msonormal0
+	{mso-style-name:msonormal;
+	mso-margin-top-alt:auto;
+	margin-right:0cm;
+	mso-margin-bottom-alt:auto;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+span.EstiloCorreo18
+	{mso-style-type:personal;
+	font-family:"Myriad Pro","sans-serif";
+	color:#1F497D;
+	font-weight:normal;
+	font-style:normal;}
+span.EstiloCorreo19
+	{mso-style-type:personal;
+	font-family:"Myriad Pro","sans-serif";
+	color:#1F497D;
+	font-weight:normal;
+	font-style:normal;}
+span.TextodegloboCar
+	{mso-style-name:"Texto de globo Car";
+	mso-style-priority:99;
+	mso-style-link:"Texto de globo";
+	font-family:"Tahoma","sans-serif";
+	mso-fareast-language:EN-US;}
+span.EstiloCorreo22
+	{mso-style-type:personal-reply;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:70.85pt 3.0cm 70.85pt 3.0cm;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]--></head><body lang=3DES link=3D"#0563C1" v=
+link=3D"#954F72"><div class=3DWordSection1><p class=3DMsoNormal><span style=
+=3D'color:#1F497D'>Bones,<o:p></o:p></span></p><p class=3DMsoNormal><span s=
+tyle=3D'color:#1F497D'><o:p>&nbsp;</o:p></span></p><p class=3DMsoNormal><sp=
+an style=3D'color:#1F497D'>Aquest cas ja est=E0 resolt.<o:p></o:p></span></=
+p>
+</body></html>
+
+------=_NextPart_001_005C_01D1D38F.7C50F700--

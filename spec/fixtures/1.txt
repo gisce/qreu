@@ -1,0 +1,65 @@
+                                                                                                                                                                                                                                                               
+Delivered-To: user@example1.com
+Received: by 127.200.52.48 with SMTP id u45csp78442qtb;
+        Fri, 1 Jul 2016 04:21:10 -0700 (PDT)
+X-Received: by 127.202.78.67 with SMTP id c64mr13744312oib.67.1467372070517;
+        Fri, 01 Jul 2016 04:21:10 -0700 (PDT)
+Return-Path: <bounces+848413-54d6-user=example1.com@sgmail.git.example.com>
+Received: from o3.sgmail.git.example.com (o3.sgmail.git.example.com. [127.254.112.98])
+        by mx.example-isp.com with ESMTPS id v66si1382317oia.248.2127.07.01.04.21.10
+        for <user@example1.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Jul 2016 04:21:10 -0700 (PDT)
+Received-SPF: pass (example-isp.com: best guess record for domain of bounces+848413-54d6-user=example1.com@sgmail.git.example.com designates 127.254.112.98 as permitted sender) client-ip=127.254.112.98;
+Authentication-Results: mx.example-isp.com;
+       dkim=pass header.i=@git.example.com;
+       spf=pass (example-isp.com: best guess record for domain of bounces+848413-54d6-user=example1.com@sgmail.git.example.com designates 127.254.112.98 as permitted sender) smtp.mailfrom=bounces+848413-54d6-user=example1.com@sgmail.git.example.com;
+       dmarc=pass (p=NONE dis=NONE) header.from=git.example.com
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=git.example.com; 
+	h=from:reply-to:to:cc:in-reply-to:references:subject:mime-version:content-type:content-transfer-encoding:list-id:list-archive:list-post:list-unsubscribe; 
+	s=s20150108; bh=gNTZC0joYdXjL1dKX66xq7XxTkM=; b=h0W7wHaj4j8JLVpj
+	qx4gqO8Y7T4HNbRR8m0scthakTQksEr1xi4Dw8APZCa0VONVf+sBTNkPVc61vS/3
+	8CYHGBjeDUsJwTqNnYnDVHtXJbdPKkhcbmSkXEhuvM1Mx+shuTcUoyOeoNqKoKWO
+	QP8olMlx7AQS3TI8ZaiGjFguDT4=
+Received: by filter0629p1mdw1.sendgrid.net with SMTP id filter0629p1mdw1.15177.5776522418
+        2016-07-01 11:21:08.277202538 +0000 UTC
+Received: from git.example-smtp2b-ext-cp1-prd.iad.git.example.net (git.example-smtp2b-ext-cp1-prd.iad.git.example.net [127.30.253.17])
+	by ismtpd0006p1iad1.sendgrid.net (SG) with ESMTP id 83Xb7Z3ERKWq3YkSFZotVQ
+	for <user@example1.com>; Fri, 01 Jul 2016 11:21:08.491 +0000 (UTC)
+Date: Fri, 01 Jul 2016 04:21:08 -0700
+From: User <notifications@git.example.com>
+Reply-To: gisce/tipoinstalacion <noreply@git.example.com>
+To: gisce/tipoinstalacion <tipoinstalacion@noreply.git.example.com>
+Cc: Push <push@noreply.git.example.com>
+Message-ID: <gisce/tipoinstalacion/pull/5/push/1184694392@git.example.com>
+In-Reply-To: <gisce/tipoinstalacion/pull/5@git.example.com>
+References: <gisce/tipoinstalacion/pull/5@git.example.com>
+Subject: Re: [gisce/tipoinstalacion] Add spec for ct (#5)
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--==_mimepart_577652245b3be_65763fe60032b2b87913e";
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Precedence: list
+List-ID: gisce/tipoinstalacion <tipoinstalacion.gisce.git.example.com>
+List-Archive: https://git.example.com/gisce/tipoinstalacion
+List-Post: <mailto:noreply@git.example.com>
+List-Unsubscribe: <mailto:unsub+00047d5b99e98bdb7b5de4e338eaee9f1dc102930d82ec3692cf00000001138e142492a169ce09ba4b59@reply.git.example.com>,
+ <https://git.example.com/notifications/unsubscribe/AAR9W9vfkq-SqTfP9wFnWvzocMPyhpOMks5qRPgkgaJpZM4JCUsn>
+
+
+----==_mimepart_577652245b3be_65763fe60032b2b87913e
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+This is the body
+
+----==_mimepart_577652245b3be_65763fe60032b2b87913e
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+This is the <b>body</b>
+
+----==_mimepart_577652245b3be_65763fe60032b2b87913e--
