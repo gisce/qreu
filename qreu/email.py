@@ -102,3 +102,6 @@ class Email(object):
 
     def __nonzero__(self):
         return bool(self.email)
+
+    def __bool__(self):
+        return self.__nonzero__()
