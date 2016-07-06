@@ -26,8 +26,9 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=git.example.com;
 	 R4Cl1kcocL7bolMw21lDEFoP+OuoXmp9DycPSa9M=
 From: User <notifications@git.example.com>
 Reply-To: gisce/qreu <reply+123456789qwertyuiopasdfghjklzxcvbnm@reply.git.example.com>
-To: gisce/qreu <qreu@noreply.git.example.com>
-Cc: 
+To: gisce/qreu <qreu@noreply.git.example.com>, Other <other@example.com>
+Cc: The Best <thebest@example.com>
+Bcc: The Boss <theboss@example.com>
 Message-ID: <gisce/qreu/pull/5@git.example.com>
 Subject: Lorem ipsum dolor sit amet
 Mime-Version: 1.0

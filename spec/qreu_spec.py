@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from qreu import Email
 
 from expects import *
+from flanker.addresslib.address import AddressList
 
 
 with description('An Email'):
@@ -49,3 +50,22 @@ with description('An Email'):
         with it('must evaluate to False'):
             c = Email('')
             expect(bool(c)).to(be_false)
+
+    with it('must return objects for From, To, Cc and Bcc'):
+        c = Email(self.raw_messages[0])
+        expect(c.from_.address).to(equal('notifications@git.example.com'))
+        expect(c.from_.display_name).to(equal('User'))
+
+        expect(c.to).to(be_a(AddressList))
+        expect(c.to.addresses).to(contain_exactly(
+            'qreu@noreply.git.example.com',
+            'other@example.com'
+        ))
+
+        expect(c.cc.addresses).to(contain_exactly(
+            'thebest@example.com'
+        ))
+
+        expect(c.bcc.addresses).to(contain_exactly(
+            'theboss@example.com'
+        ))

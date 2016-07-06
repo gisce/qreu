@@ -4,6 +4,8 @@ from __future__ import absolute_import
 import email
 import re
 
+from flanker.addresslib import address
+
 
 RE_PATTERNS = re.compile('\s*({0})'.format('|'.join(
     [
@@ -105,3 +107,33 @@ class Email(object):
 
     def __bool__(self):
         return self.__nonzero__()
+
+    @property
+    def from_(self):
+        """
+
+        :return: `flanker.addresslib.address.Address`
+        """
+        return address.parse(self.email.get('From', ''))
+
+    @property
+    def to(self):
+        """
+
+        :return: `flanker.addresslib.address.AddressList`
+        """
+        return address.parse_list(self.email.get('To', ''))
+
+    @property
+    def cc(self):
+        """
+        :return: `flanker.addresslib.address.AddressList`
+        """
+        return address.parse_list(self.email.get('Cc', ''))
+
+    @property
+    def bcc(self):
+        """
+        :return: `flanker.addresslib.address.AddressList`
+        """
+        return address.parse_list(self.email.get('Bcc', ''))
