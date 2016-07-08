@@ -157,3 +157,7 @@ class Email(object):
         :return: `flanker.addresslib.address.AddressList`
         """
         return address.parse_list(self.header('Bcc', ''))
+
+    @property
+    def recipients(self):
+        return self.to + self.cc + self.bcc
