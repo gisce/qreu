@@ -16,6 +16,10 @@ with description('An Email'):
     with it('must be initialized with a raw message'):
         c = Email(self.raw_messages[0])
 
+    with it('must know if is a reply or not'):
+        c = Email(self.raw_messages[0])
+        expect(c.is_reply).to(be_false)
+
     with it('must clean subjects from Replies'):
         c = Email(self.raw_messages[1])
         expect(c.email.get('Subject')).to(equal('Re: [gisce/tipoinstalacion] Add spec for ct (#5)'))
