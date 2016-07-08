@@ -69,3 +69,7 @@ with description('An Email'):
         expect(c.bcc.addresses).to(contain_exactly(
             'theboss@example.com'
         ))
+
+    with it('must to decode headers'):
+        c = Email("Subject: =?iso-8859-1?Q?ERROR_A_L'OBRIR_EL_LOT_DE_PERFILACI=D3_JUNY?=")
+        expect(c.subject).to(equal(u"ERROR A L'OBRIR EL LOT DE PERFILACIÓ JUNY"))

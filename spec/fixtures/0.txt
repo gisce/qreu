@@ -30,7 +30,7 @@ To: gisce/qreu <qreu@noreply.git.example.com>, Other <other@example.com>
 Cc: The Best <thebest@example.com>
 Bcc: The Boss <theboss@example.com>
 Message-ID: <gisce/qreu/pull/5@git.example.com>
-Subject: Lorem ipsum dolor sit amet
+Subject: =?utf-8?q?Lorem_=C3=ADpsum_dolor_sit_=C3=A0met?=
 Mime-Version: 1.0
 Content-Type: multipart/alternative;
  boundary="--==_mimepart_577543da3e631_8003f915437f29c675196";
