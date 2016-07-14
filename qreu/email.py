@@ -5,7 +5,7 @@ import email
 from email.header import decode_header
 import re
 
-from flanker.addresslib import address
+from qreu import address
 
 
 RE_PATTERNS = re.compile('\s*({0})'.format('|'.join(
