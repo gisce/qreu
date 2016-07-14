@@ -1,7 +1,10 @@
 from __future__ import absolute_import
 
 from collections import namedtuple
-from UserList import UserList
+try:
+    from collections import UserList
+except ImportError:
+    from UserList import UserList
 from email.utils import getaddresses, parseaddr
 
 
