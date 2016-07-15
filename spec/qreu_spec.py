@@ -1,9 +1,9 @@
 # coding=utf-8
 from __future__ import absolute_import
 from qreu import Email
+from qreu.address import AddressList
 
 from expects import *
-from flanker.addresslib.address import AddressList
 
 
 with description('An Email'):

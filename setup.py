@@ -7,7 +7,6 @@ setup(
     packages=find_packages(),
     url='https://github.com/gisce/qreu',
     install_requires=[
-        'flanker'
     ],
     license='MIT',
     author='GISCE-TI, S.L.',

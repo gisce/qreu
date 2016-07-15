@@ -5,7 +5,7 @@ import email
 from email.header import decode_header
 import re
 
-from flanker.addresslib import address
+from qreu import address
 
 
 RE_PATTERNS = re.compile('\s*({0})'.format('|'.join(
@@ -132,7 +132,7 @@ class Email(object):
     def from_(self):
         """
 
-        :return: `flanker.addresslib.address.Address`
+        :return: `address.Address`
         """
         return address.parse(self.header('From', ''))
 
@@ -140,21 +140,21 @@ class Email(object):
     def to(self):
         """
 
-        :return: `flanker.addresslib.address.AddressList`
+        :return: `address.AddressList`
         """
         return address.parse_list(self.header('To', ''))
 
     @property
     def cc(self):
         """
-        :return: `flanker.addresslib.address.AddressList`
+        :return: `address.AddressList`
         """
         return address.parse_list(self.header('Cc', ''))
 
     @property
     def bcc(self):
         """
-        :return: `flanker.addresslib.address.AddressList`
+        :return: `address.AddressList`
         """
         return address.parse_list(self.header('Bcc', ''))
 
