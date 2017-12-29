@@ -1,7 +1,8 @@
 # coding=utf-8
 from __future__ import absolute_import
 from qreu import Email
-from qreu.address import AddressList
+from qreu.address import AddressList, Address
+import qreu.address
 
 from mamba import *
 from expects import *
@@ -102,7 +103,7 @@ with description("Creating an Email"):
         with it("must have all args provided (basic MIMEMultipart)"):
             vals = {
                 'subject': 'Test message',
-                'to': 'to@example.com',
+                'to': ['to@example.com'],
                 'from': 'from@example.com',
                 'cc': [
                     'secret@example.com',
@@ -115,9 +116,10 @@ with description("Creating an Email"):
                 'body_text': 'Text-based body for the e-mail',
             }
             e = Email(**vals)
-            expect(e.subject).to(be_empty)
+            expect(e.subject).to(equal(vals['subject']))
             expect(e.to).to(equal(vals['to']))
-            expect(e.from_).to(equal(vals['from']))
+            aux = qreu.address.parse(vals['from'])
+            expect(e.from_).to(equal(aux))
             expect(e.cc).to(equal(vals['cc']))
             expect(e.bcc).to(equal(vals['bcc']))
             expect(e.recipients).to(equal(
