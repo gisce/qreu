@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import email
 from email.header import decode_header
@@ -54,6 +54,27 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
+        to_address = kwargs.get('to', False)
+        if to_address:
+            if isinstance(to_address, list):
+                to_address = ','.join(to_address)
+            self.email['To'] = to_address
+        subject = kwargs.get('subject', False)
+        if subject:
+            self.email['Subject'] = subject
+        from_address = kwargs.get('from', False)
+        if from_address:
+            self.email['From'] = from_address
+        cc_address = kwargs.get('cc', False)
+        if cc_address:
+            if isinstance(cc_address, list):
+                cc_address = ','.join(cc_address)
+            self.email['CC'] = cc_address
+        bcc_address = kwargs.get('bcc', False)
+        if bcc_address:
+            if isinstance(bcc_address, list):
+                bcc_address = ','.join(bcc_address)
+            self.email['BCC'] = bcc_address
 
     @staticmethod
     def parse(raw_message):
