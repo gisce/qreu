@@ -3,10 +3,11 @@ from __future__ import absolute_import
 from qreu import Email
 from qreu.address import AddressList
 
+from mamba import *
 from expects import *
 
 
-with description('An Email'):
+with description('Parsing an Email'):
     with before.all:
         self.raw_messages = []
         for fixture in range(0, 4):
@@ -14,23 +15,23 @@ with description('An Email'):
                 self.raw_messages.append(f.read())
 
     with it('must be initialized with a raw message'):
-        c = Email(self.raw_messages[0])
+        c = Email.parse(self.raw_messages[0])
 
     with it('must know if is a reply or not'):
-        c = Email(self.raw_messages[0])
+        c = Email.parse(self.raw_messages[0])
         expect(c.is_reply).to(be_false)
 
     with it('must clean subjects from Replies'):
-        c = Email(self.raw_messages[1])
+        c = Email.parse(self.raw_messages[1])
         expect(c.email.get('Subject')).to(equal('Re: [gisce/tipoinstalacion] Add spec for ct (#5)'))
         expect(c.subject).to(equal('[gisce/tipoinstalacion] Add spec for ct (#5)'))
 
     with it('must kwnon if a email is fowared'):
-        c = Email(self.raw_messages[2])
+        c = Email.parse(self.raw_messages[2])
         expect(c.is_forwarded).to(be_true)
 
     with it('must known all the references'):
-        c = Email(self.raw_messages[3])
+        c = Email.parse(self.raw_messages[3])
         expect(c.references).to(contain_exactly(
             '<001f01d1d29d$69440960$3bcc1c20$@client.example.com>',
             '<CA+y8Mvn42Yn2B4GOaZOMQ3TwNLwC7u24FBp26moih2RFjzUeEA@mail.mailservice.example.com>',
@@ -40,23 +41,23 @@ with description('An Email'):
         ))
 
     with it('must know his parent'):
-        c = Email(self.raw_messages[3])
+        c = Email.parse(self.raw_messages[3])
         expect(c.parent).to(equal('<003901d1d2d0$5fde26c0$1f9a7440$@client.example.com>'))
 
         with context('And if it does not have parent'):
             with it('must return None'):
-                c = Email(self.raw_messages[0])
+                c = Email.parse(self.raw_messages[0])
                 expect(c.parent).to(be_none)
 
     with context('with an empty string'):
         with it('must work'):
-            c = Email('')
+            c = Email.parse('')
         with it('must evaluate to False'):
-            c = Email('')
+            c = Email.parse('')
             expect(bool(c)).to(be_false)
 
     with it('must return objects for From, To, Cc and Bcc'):
-        c = Email(self.raw_messages[0])
+        c = Email.parse(self.raw_messages[0])
         expect(c.from_.address).to(equal('notifications@git.example.com'))
         expect(c.from_.display_name).to(equal('User'))
 
@@ -75,7 +76,7 @@ with description('An Email'):
         ))
 
     with it('must have a recipients properties'):
-        c = Email(self.raw_messages[0])
+        c = Email.parse(self.raw_messages[0])
 
         expect(c.recipients.addresses).to(contain_exactly(
             'qreu@noreply.git.example.com',
@@ -85,5 +86,5 @@ with description('An Email'):
         ))
 
     with it('must to decode headers'):
-        c = Email("Subject: =?iso-8859-1?Q?ERROR_A_L'OBRIR_EL_LOT_DE_PERFILACI=D3_JUNY?=")
+        c = Email.parse("Subject: =?iso-8859-1?Q?ERROR_A_L'OBRIR_EL_LOT_DE_PERFILACI=D3_JUNY?=")
         expect(c.subject).to(equal(u"ERROR A L'OBRIR EL LOT DE PERFILACIÓ JUNY"))

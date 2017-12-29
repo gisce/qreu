@@ -3,6 +3,9 @@ from __future__ import absolute_import
 
 import email
 from email.header import decode_header
+from email.mime.multipart import MIMEMultipart
+
+
 import re
 
 from qreu import address
@@ -49,8 +52,14 @@ class Email(object):
 
     :param raw_message: Raw string message
     """
-    def __init__(self, raw_message):
-        self.email = email.message_from_string(raw_message)
+    def __init__(self, **kwargs):
+        self.email = MIMEMultipart()
+
+    @staticmethod
+    def parse(raw_message):
+        mail = Email()
+        mail.email = email.message_from_string(raw_message)
+        return mail
 
     def header(self, header, default=None):
         """
