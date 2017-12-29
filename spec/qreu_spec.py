@@ -98,3 +98,28 @@ with description("Creating an Email"):
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
     
+    with context("using kwargs"):
+        with it("must have all args provided (basic MIMEMultipart)"):
+            vals = {
+                'subject': 'Test message',
+                'to': 'to@example.com',
+                'from': 'from@example.com',
+                'cc': [
+                    'secret@example.com',
+                    'email2@example.com'
+                ],
+                'bcc': [
+                    'another@example.com',
+                    'email@example.com'
+                ],
+                'body_text': 'Text-based body for the e-mail',
+            }
+            e = Email(**vals)
+            expect(e.subject).to(be_empty)
+            expect(e.to).to(equal(vals['to']))
+            expect(e.from_).to(equal(vals['from']))
+            expect(e.cc).to(equal(vals['cc']))
+            expect(e.bcc).to(equal(vals['bcc']))
+            expect(e.recipients).to(equal(
+                vals['to'] + vals['cc'] + vals['bcc']))
+            expect(e.body_text).to(equal(vals['body_text']))
