@@ -88,3 +88,11 @@ with description('Parsing an Email'):
     with it('must to decode headers'):
         c = Email.parse("Subject: =?iso-8859-1?Q?ERROR_A_L'OBRIR_EL_LOT_DE_PERFILACI=D3_JUNY?=")
         expect(c.subject).to(equal(u"ERROR A L'OBRIR EL LOT DE PERFILACIÓ JUNY"))
+
+with description("Creating an Email"):
+    with context("empty"):
+        with it("must have all attributes to None and work"):
+            e = Email()
+            expect(e.subject).to(be_empty)
+            expect(e.to).to(be_empty)
+            expect(e.cc).to(be_empty)
