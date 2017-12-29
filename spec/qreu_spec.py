@@ -96,3 +96,5 @@ with description("Creating an Email"):
             expect(e.subject).to(be_empty)
             expect(e.to).to(be_empty)
             expect(e.cc).to(be_empty)
+            expect(e.recipients).to(be_empty)
+    
