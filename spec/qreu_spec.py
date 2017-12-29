@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 from qreu import Email
 from qreu.address import AddressList, Address
 import qreu.address
@@ -106,22 +106,33 @@ with description("Creating an Email"):
                 'to': ['to@example.com'],
                 'from': 'from@example.com',
                 'cc': [
-                    'secret@example.com',
-                    'email2@example.com'
-                ],
-                'bcc': [
                     'another@example.com',
                     'email@example.com'
+                ],
+                'bcc': [
+                    'secret@example.com',
+                    'email2@example.com'
                 ],
                 'body_text': 'Text-based body for the e-mail',
             }
             e = Email(**vals)
             expect(e.subject).to(equal(vals['subject']))
             expect(e.to).to(equal(vals['to']))
-            aux = qreu.address.parse(vals['from'])
-            expect(e.from_).to(equal(aux))
-            expect(e.cc).to(equal(vals['cc']))
-            expect(e.bcc).to(equal(vals['bcc']))
-            expect(e.recipients).to(equal(
-                vals['to'] + vals['cc'] + vals['bcc']))
-            expect(e.body_text).to(equal(vals['body_text']))
+            expect(e.from_).to(equal(qreu.address.parse(vals['from'])))
+            expect(e.cc).to(equal([','.join(vals['cc'])]))
+            expect(e.bcc).to(equal([','.join(vals['bcc'])]))
+            recipients = list(set([
+                ','.join(vals['to']),
+                ','.join(vals['cc']),
+                ','.join(vals['bcc'])
+            ]))
+            failed_vals = []
+            for elem in recipients:
+                if elem not in e.recipients:
+                    failed_vals.append(elem)
+            expect(failed_vals).to(be_empty)
+            failed_vals = []
+            for elem in e.recipients:
+                if elem not in recipients:
+                    failed_vals.append(elem)
+            expect(failed_vals).to(be_empty)
