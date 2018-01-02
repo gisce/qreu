@@ -5,7 +5,7 @@ from qreu.address import AddressList, Address
 import qreu.address
 
 from email.mime.multipart import MIMEMultipart
-import html2text
+from html2text import html2text
 
 from mamba import *
 from expects import *
@@ -122,9 +122,10 @@ with description("Creating an Email"):
         with it("must add body to Email with only html text"):
             e = Email()
             html = 'Html-based body for the e-mail'
+            plain = html2text(html)
             e.add_body_text(body_html=html)
             expect(e.body_parts).to(have_keys('plain', 'html'))
-            expect(e.body_parts['plain']).to(equal(html))
+            expect(e.body_parts['plain']).to(equal(plain))
             expect(e.body_parts['html']).to(equal(html))
         
         with it('must return False if no body provided on add_body'):
@@ -211,8 +212,7 @@ with description("Creating an Email"):
         with it('must parse html2text if no text provided'):
             vals = self.vals.copy()
             vals.pop('body_text')
-            body_text = html2text.html2text(vals['body_html'])
-            print(body_text)
+            body_text = html2text(vals['body_html'])
             e = Email(**vals)
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(body_text))
