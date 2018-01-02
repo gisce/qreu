@@ -209,3 +209,22 @@ class Email(object):
     @property
     def recipients(self):
         return self.to + self.cc + self.bcc
+
+    @property
+    def body_parts(self):
+        """
+        Get all body parts of the email (text, html and attachments)
+        """
+        return_vals = {}
+        for part in self.email.walk():
+            maintype, subtype = part.get_content_type().split('/')
+            # Multipart/* are containers, so we skip it
+            if maintype == 'multipart':
+                continue
+            # Get Text and HTML
+            if maintype == 'text':
+                if subtype in ['plain', 'html']:
+                    return_vals.update({subtype:part.get_payload(decode=True)})
+            # Get Attachments
+            # TODO
+        return return_vals
