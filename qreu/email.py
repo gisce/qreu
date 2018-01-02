@@ -137,6 +137,28 @@ class Email(object):
             header_value =  ''.join(result)
         return header_value
 
+    def add_body_text(self, body_plain=False, body_html=False):
+        """
+        Add the Body Text to Email.
+        Throws AttributeError if email already has a body text.
+        :param body_plain:  Plain Text for the Body
+        :type body_plain:   str
+        :param body_html:   HTML Text for the Body
+        :type body_html:    str
+        :return:            True if updated, False if failed. 
+                            Exception if already added a body
+        :rtype:             bool
+        """
+        body_keys = self.email.body_parts.keys()
+        if ('plain' in body_keys) or ('html' in body_keys):
+            raise AttributeError('This email already has a body!')
+            # TODO: create a new "local" email to replace the SELF with new body
+        try:
+            self.email.attach(
+                self.format_body(text_html=body_html, text_plain=body_plain))
+        except ValueError:
+            return False
+
     @property
     def is_reply(self):
         """
