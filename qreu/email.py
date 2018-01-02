@@ -285,7 +285,7 @@ class Email(object):
                 if 'attachment' in new_attach:
                     filename = new_attach.split('filename=')[-1][1:-1]
                     if filename:
-                        yield filename
+                        yield filename, part.get_payload()
 
     @property
     def mime_string(self):
