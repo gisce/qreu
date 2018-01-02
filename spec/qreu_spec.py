@@ -155,3 +155,6 @@ with description("Creating an Email"):
             e = Email(**vals)
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(vals['body_html']))
+        
+        with it('Must raise exception if no body provided on body_maker'):
+            expect(Email.format_body).to(raise_error(AttributeError))
