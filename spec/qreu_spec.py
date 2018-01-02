@@ -210,22 +210,6 @@ with description("Creating an Email"):
         
         with it('must return the email as MIME-formated string'):
             e = Email(**self.vals)
-            test_mail = MIMEMultipart()
-            to_address = self.vals['to']
-            if isinstance(to_address, list):
-                to_address = ','.join(to_address)
-            test_mail['To'] = to_address
-            test_mail['Subject'] = self.vals['subject']
-            test_mail['From'] = self.vals['from']
-            cc_address = self.vals['cc']
-            if isinstance(cc_address, list):
-                cc_address = ','.join(cc_address)
-            test_mail['CC'] = cc_address
-            bcc_address = self.vals['bcc']
-            if isinstance(bcc_address, list):
-                bcc_address = ','.join(bcc_address)
-            test_mail['BCC'] = bcc_address
-            body_text = self.vals['body_text']
-            body_html = self.vals['body_html']
-            test_mail.attach(Email.format_body(body_text, body_html))
-            expect(e.mime_string).to(equal(test_mail.as_string()))
+            expect(
+                Email.parse(e.mime_string).mime_string
+            ).to(equal(e.mime_string))
