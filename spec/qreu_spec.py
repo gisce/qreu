@@ -147,8 +147,11 @@ with description("Creating an Email"):
             expect(e.body_parts['files']).to(equal([f_name]))
             with open(f_path) as f:
                 expect(e.add_attachment(fileobj=f)).to(be_true)
-            files = [filename for filename in e.attachments]
+            files = [filename for filename, filecontent in e.attachments]
             expect(files).to(equal([f_name, f_name]))
+            for filename, filecontent in e.attachments:
+                with open(f_path) as f:
+                    expect(filecontent).to(equal(f.read()))
 
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():
