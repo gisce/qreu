@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import email
 from email.header import decode_header
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 import re
@@ -75,6 +76,23 @@ class Email(object):
             if isinstance(bcc_address, list):
                 bcc_address = ','.join(bcc_address)
             self.email['BCC'] = bcc_address
+        body_text = kwargs.get('body_text', False)
+        body_html = kwargs.get('body_html', False)
+        if body_text or body_html:
+            # TODO: txt2html + html2text
+            if body_text and not body_html:
+                msg_text = MIMEText(body_text, _subtype='plain')
+                msg_html = MIMEText(body_text, _subtype='html')
+            if body_html and not body_text:
+                msg_html = MIMEText(body_html, _subtype='html')
+                msg_text = MIMEText(body_html, _subtype='plain')
+            if body_text and body_html:
+                msg_text = MIMEText(body_text, _subtype='plain')
+                msg_html = MIMEText(body_html, _subtype='html')
+            msg_part = MIMEMultipart(_subtype='alternative')
+            msg_part.attach(msg_text)
+            msg_part.attach(msg_html)
+            self.email.attach(msg_part)
 
     @staticmethod
     def parse(raw_message):
