@@ -135,23 +135,26 @@ with description("Creating an Email"):
         with it('must raise AtributeErrpr if adding the body a 2nd time'):
             e = Email()
             e.add_body_text('some_body_text')
-            expect(
-                e.add_body_text
-            ).to(raise_error(AttributeError))
+            expect(e.add_body_text).to(raise_error(AttributeError))
 
         with it('must add an attachments to body'):
             e = Email()
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
-            e.add_attachment(filepath=f_path)
+            with open(f_path) as f:
+                expect(e.add_attachment(fileobj=f)).to(be_true)
             expect(e.body_parts).to(have_key('files'))
             expect(e.body_parts['files']).to(equal([f_name]))
-            expect(e.add_attachment(filepath=f_path)).to(be_true)
+            with open(f_path) as f:
+                expect(e.add_attachment(fileobj=f)).to(be_true)
             expect(e.body_parts['files']).to(equal([f_name, f_name]))
 
         with it('must raise an exception adding an unexisting attachment'):
-            e = Email()
-            expect(e.add_attachment(False)).to(be_false)
+            def call_wrongly():
+                e = Email()
+                e.add_attachment(False)    
+            
+            expect(call_wrongly).to(raise_error(ValueError))
 
     with context("using kwargs"):
         with before.all:
