@@ -275,5 +275,18 @@ class Email(object):
         return return_vals
 
     @property
+    def attachments(self):
+        """
+        Get all attachments of the email
+        """
+        for part in self.email.walk():
+            if part.get_content_maintype() == 'application':
+                new_attach = part.get('Content-Disposition', False)
+                if 'attachment' in new_attach:
+                    filename = new_attach.split('filename=')[-1][1:-1]
+                    if filename:
+                        yield filename
+
+    @property
     def mime_string(self):
         return self.email.as_string()
