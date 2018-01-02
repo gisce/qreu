@@ -7,6 +7,8 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from html2text import html2text
+
 import re
 
 from qreu import address
@@ -109,7 +111,8 @@ class Email(object):
             msg_html = MIMEText(text_plain, _subtype='html')
         if text_html and not text_plain:
             msg_html = MIMEText(text_html, _subtype='html')
-            msg_plain = MIMEText(text_html, _subtype='plain')
+            text_plain = (html2text(text_html))
+            msg_plain = MIMEText(text_plain, _subtype='plain')
         if text_plain and text_html:
             msg_plain = MIMEText(text_plain, _subtype='plain')
             msg_html = MIMEText(text_html, _subtype='html')
