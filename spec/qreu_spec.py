@@ -156,7 +156,7 @@ with description("Creating an Email"):
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():
                 e = Email()
-                e.add_attachment(False)    
+                e.add_attachment(False)
             
             expect(call_wrongly).to(raise_error(ValueError))
 
