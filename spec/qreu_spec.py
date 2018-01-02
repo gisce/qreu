@@ -138,3 +138,5 @@ with description("Creating an Email"):
                 if elem not in recipients:
                     failed_vals.append(elem)
             expect(failed_vals).to(be_empty)
+            expect(e.body_parts['plain']).to(equal(self.vals['body_text']))
+            expect(e.body_parts['html']).to(equal(self.vals['body_html']))
