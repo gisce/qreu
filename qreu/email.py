@@ -3,9 +3,9 @@ from __future__ import absolute_import, unicode_literals
 
 import email
 from email.header import decode_header
+from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 
 import re
 
@@ -118,6 +118,28 @@ class Email(object):
         msg_part.attach(msg_html)
         return msg_part
 
+    @staticmethod
+    def format_attachment(filepath):
+        """
+        Create an attachment part for a MIMEMultipart attach
+        :param filepath: Path to the file to attach
+        :type filepath:  str
+        :return:         Returns a MIMEApplication with the attachment
+        :rtype:          MIMEApplication
+        """
+        if not filepath:
+            raise ValueError('File Path not provided correctly!')
+        from os.path import isfile, abspath, isabs, basename
+        if not isabs(filepath):
+            filepath = abspath(filepath)
+        filename = basename(filepath)
+        attachment = MIMEApplication('octet-stream')
+        attachment.add_header(
+            'Content-Disposition', 'attachment; filename="%s"' % filename)
+        with open(filepath, 'rb') as reader:
+            attachment.set_payload(reader.read())
+        return attachment
+
     def header(self, header, default=None):
         """
         Get the email Header always in Unicode
@@ -156,6 +178,21 @@ class Email(object):
         try:
             self.email.attach(
                 self.format_body(text_html=body_html, text_plain=body_plain))
+        except ValueError:
+            return False
+
+    def add_attachment(self, filepath):
+        """
+        Add an attachment file to the email
+        :param filepath: Path to the file to attach
+        :type filepath:  str
+        :return:         True if Added, False if failed
+        :rtype:          bool
+        """
+        try:
+            part = self.format_attachment(filepath)
+            self.email.attach(part)
+            return True
         except ValueError:
             return False
 
