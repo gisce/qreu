@@ -99,6 +99,15 @@ with description("Creating an Email"):
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
 
+        with it('must add body to Email'):
+            e = Email()
+            plain = 'Text-based body for the e-mail'
+            html = 'Html-based body for the e-mail'
+            e.add_body_text(body_plain=plain, body_html=html)
+            expect(e.body_parts).to(have_keys('plain', 'html'))
+            expect(e.body_parts['plain']).to(equal(plain))
+            expect(e.body_parts['html']).to(equal(html))
+
         with it("must add body to Email with only plain text"):
             e = Email()
             plain = 'Text-based body for the e-mail'
