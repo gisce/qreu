@@ -142,8 +142,12 @@ with description("Creating an Email"):
             e.add_attachment(filepath=f_path)
             expect(e.body_parts).to(have_key('files'))
             expect(e.body_parts['files']).to(equal([f_name]))
-            e.add_attachment(filepath=f_path)
+            expect(e.add_attachment(filepath=f_path)).to(be_true)
             expect(e.body_parts['files']).to(equal([f_name, f_name]))
+
+        with it('must raise an exception adding an unexisting attachment'):
+            e = Email()
+            expect(e.add_attachment(False)).to(be_false)
 
     with context("using kwargs"):
         with before.all:
