@@ -304,5 +304,12 @@ class Email(object):
                     return_vals.update(
                         {subtype:part.get_payload(decode=True).decode('utf-8')})
             # Get Attachments
-            # TODO
+            if maintype == 'application':
+                files = return_vals.get('files', [])
+                new_attach = part.get('Content-Disposition', False)
+                if 'attachment' in new_attach:
+                    filename = new_attach.split('filename=')[-1][1:-1]
+                    if filename:
+                        files.append(filename)
+                return_vals['files'] = files
         return return_vals
