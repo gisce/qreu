@@ -88,32 +88,32 @@ class Email(object):
         return mail
 
     @staticmethod
-    def format_body(body_text=False, body_html=False):
+    def format_body(text_plain=False, text_html=False):
         """
         Return MIME-Formatted body text as multipart/alternative with
         two MIMEText parts (one text/plain and one text/html).
         If not provided with text or html parse from the other
-        :param body_text: Plain text for the e-mail body
-        :type body_text:  str
-        :param body_html: HMTL text for the e-mail body
-        :type body_html:  str
-        :return:          MIME-Formatted body
-        :rtype:           MIMEMultipart
+        :param text_plain: Plain text for the e-mail body
+        :type text_plain:  str
+        :param text_html:  HMTL text for the e-mail body
+        :type text_html:   str
+        :return:           MIME-Formatted body
+        :rtype:            MIMEMultipart
         """
-        if not (body_html and body_text):
+        if not (text_html and text_plain):
             raise AttributeError('No HTML or TEXT provided')
         # TODO: txt2html + html2text
-        if body_text and not body_html:
-            msg_text = MIMEText(body_text, _subtype='plain')
-            msg_html = MIMEText(body_text, _subtype='html')
-        if body_html and not body_text:
-            msg_html = MIMEText(body_html, _subtype='html')
-            msg_text = MIMEText(body_html, _subtype='plain')
-        if body_text and body_html:
-            msg_text = MIMEText(body_text, _subtype='plain')
-            msg_html = MIMEText(body_html, _subtype='html')
+        if text_plain and not text_html:
+            msg_plain = MIMEText(text_plain, _subtype='plain')
+            msg_html = MIMEText(text_plain, _subtype='html')
+        if text_html and not text_plain:
+            msg_html = MIMEText(text_html, _subtype='html')
+            msg_plain = MIMEText(text_html, _subtype='plain')
+        if text_plain and text_html:
+            msg_plain = MIMEText(text_plain, _subtype='plain')
+            msg_html = MIMEText(text_html, _subtype='html')
         msg_part = MIMEMultipart(_subtype='alternative')
-        msg_part.attach(msg_text)
+        msg_part.attach(msg_plain)
         msg_part.attach(msg_html)
         return msg_part
 
