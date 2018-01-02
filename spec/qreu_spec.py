@@ -135,6 +135,16 @@ with description("Creating an Email"):
                 e.add_body_text
             ).to(raise_error(AttributeError))
 
+        with it('must add an attachments to body'):
+            e = Email()
+            f_path = 'spec/fixtures/0.txt'
+            f_name = '0.txt'
+            e.add_attachment(filepath=f_path)
+            expect(e.body_parts).to(have_key('files'))
+            expect(e.body_parts['files']).to(equal([f_name]))
+            e.add_attachment(filepath=f_path)
+            expect(e.body_parts['files']).to(equal([f_name, f_name]))
+
     with context("using kwargs"):
         with before.all:
             self.vals = {
