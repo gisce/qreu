@@ -313,3 +313,7 @@ class Email(object):
                         files.append(filename)
                 return_vals['files'] = files
         return return_vals
+
+    @property
+    def mime_string(self):
+        return self.email.as_string()
