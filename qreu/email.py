@@ -264,7 +264,8 @@ class Email(object):
             # Get Text and HTML
             if maintype == 'text':
                 if subtype in ['plain', 'html']:
-                    return_vals.update({subtype:part.get_payload(decode=True)})
+                    return_vals.update(
+                        {subtype:part.get_payload(decode=True).decode('utf-8')})
             # Get Attachments
             # TODO
         return return_vals
