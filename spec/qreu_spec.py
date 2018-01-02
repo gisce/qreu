@@ -202,7 +202,7 @@ with description("Creating an Email"):
             expect(e.body_parts['plain']).to(equal(self.vals['body_text']))
             expect(e.body_parts['html']).to(equal(self.vals['body_html']))
 
-        with _it('must parse text2html if no html provided'):
+        with it('must parse text2html if no html provided'):
             vals = self.vals.copy()
             vals.pop('body_html')
             e = Email(**vals)
