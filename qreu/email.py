@@ -79,26 +79,43 @@ class Email(object):
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
-            # TODO: txt2html + html2text
-            if body_text and not body_html:
-                msg_text = MIMEText(body_text, _subtype='plain')
-                msg_html = MIMEText(body_text, _subtype='html')
-            if body_html and not body_text:
-                msg_html = MIMEText(body_html, _subtype='html')
-                msg_text = MIMEText(body_html, _subtype='plain')
-            if body_text and body_html:
-                msg_text = MIMEText(body_text, _subtype='plain')
-                msg_html = MIMEText(body_html, _subtype='html')
-            msg_part = MIMEMultipart(_subtype='alternative')
-            msg_part.attach(msg_text)
-            msg_part.attach(msg_html)
-            self.email.attach(msg_part)
+            self.email.attach(self.format_body(body_text, body_html))
 
     @staticmethod
     def parse(raw_message):
         mail = Email()
         mail.email = email.message_from_string(raw_message)
         return mail
+
+    @staticmethod
+    def format_body(body_text=False, body_html=False):
+        """
+        Return MIME-Formatted body text as multipart/alternative with
+        two MIMEText parts (one text/plain and one text/html).
+        If not provided with text or html parse from the other
+        :param body_text: Plain text for the e-mail body
+        :type body_text:  str
+        :param body_html: HMTL text for the e-mail body
+        :type body_html:  str
+        :return:          MIME-Formatted body
+        :rtype:           MIMEMultipart
+        """
+        if not (body_html and body_text):
+            raise Exception('No HTML or TEXT provided')
+        # TODO: txt2html + html2text
+        if body_text and not body_html:
+            msg_text = MIMEText(body_text, _subtype='plain')
+            msg_html = MIMEText(body_text, _subtype='html')
+        if body_html and not body_text:
+            msg_html = MIMEText(body_html, _subtype='html')
+            msg_text = MIMEText(body_html, _subtype='plain')
+        if body_text and body_html:
+            msg_text = MIMEText(body_text, _subtype='plain')
+            msg_html = MIMEText(body_html, _subtype='html')
+        msg_part = MIMEMultipart(_subtype='alternative')
+        msg_part.attach(msg_text)
+        msg_part.attach(msg_html)
+        return msg_part
 
     def header(self, header, default=None):
         """
