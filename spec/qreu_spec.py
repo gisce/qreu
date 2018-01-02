@@ -119,14 +119,14 @@ with description("Creating an Email"):
         with it("must add body to Email with only html text"):
             e = Email()
             html = 'Html-based body for the e-mail'
-            e.add_body_text(body_html=plain)
+            e.add_body_text(body_html=html)
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(html))
             expect(e.body_parts['html']).to(equal(html))
         
         with it('must raise exception if no body provided on body_maker'):
             expect(Email.format_body).to(raise_error(ValueError))
-            
+
     with context("using kwargs"):
         with before.all:
             self.vals = {

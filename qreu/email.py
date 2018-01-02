@@ -149,7 +149,7 @@ class Email(object):
                             Exception if already added a body
         :rtype:             bool
         """
-        body_keys = self.email.body_parts.keys()
+        body_keys = self.body_parts.keys()
         if ('plain' in body_keys) or ('html' in body_keys):
             raise AttributeError('This email already has a body!')
             # TODO: create a new "local" email to replace the SELF with new body
