@@ -92,7 +92,8 @@ class Email(object):
         """
         Return MIME-Formatted body text as multipart/alternative with
         two MIMEText parts (one text/plain and one text/html).
-        If not provided with text or html parse from the other
+        If not provided with text or html parse from the other.
+        Raise ValueError if not text or HTML provided
         :param text_plain: Plain text for the e-mail body
         :type text_plain:  str
         :param text_html:  HMTL text for the e-mail body
@@ -101,7 +102,7 @@ class Email(object):
         :rtype:            MIMEMultipart
         """
         if not (text_html and text_plain):
-            raise AttributeError('No HTML or TEXT provided')
+            raise ValueError('No HTML or TEXT provided')
         # TODO: txt2html + html2text
         if text_plain and not text_html:
             msg_plain = MIMEText(text_plain, _subtype='plain')
