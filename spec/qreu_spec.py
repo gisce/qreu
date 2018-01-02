@@ -123,7 +123,10 @@ with description("Creating an Email"):
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(html))
             expect(e.body_parts['html']).to(equal(html))
-    
+        
+        with it('must raise exception if no body provided on body_maker'):
+            expect(Email.format_body).to(raise_error(ValueError))
+            
     with context("using kwargs"):
         with before.all:
             self.vals = {
@@ -181,5 +184,3 @@ with description("Creating an Email"):
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(vals['body_html']))
         
-        with it('must raise exception if no body provided on body_maker'):
-            expect(Email.format_body).to(raise_error(AttributeError))
