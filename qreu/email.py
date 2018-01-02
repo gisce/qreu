@@ -81,45 +81,13 @@ class Email(object):
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
-            self.email.attach(self.format_body(body_text, body_html))
+            self.add_body_text(body_text, body_html)
 
     @staticmethod
     def parse(raw_message):
         mail = Email()
         mail.email = email.message_from_string(raw_message)
         return mail
-
-    @staticmethod
-    def format_body(text_plain=False, text_html=False):
-        """
-        Return MIME-Formatted body text as multipart/alternative with
-        two MIMEText parts (one text/plain and one text/html).
-        If not provided with text or html parse from the other.
-        Raise ValueError if not text or HTML provided
-        :param text_plain: Plain text for the e-mail body
-        :type text_plain:  str
-        :param text_html:  HMTL text for the e-mail body
-        :type text_html:   str
-        :return:           MIME-Formatted body
-        :rtype:            MIMEMultipart
-        """
-        if not (text_html or text_plain):
-            raise ValueError('No HTML or TEXT provided')
-        # TODO: txt2html + html2text
-        if text_plain and not text_html:
-            msg_plain = MIMEText(text_plain, _subtype='plain')
-            msg_html = MIMEText(text_plain, _subtype='html')
-        if text_html and not text_plain:
-            msg_html = MIMEText(text_html, _subtype='html')
-            text_plain = (html2text(text_html))
-            msg_plain = MIMEText(text_plain, _subtype='plain')
-        if text_plain and text_html:
-            msg_plain = MIMEText(text_plain, _subtype='plain')
-            msg_html = MIMEText(text_html, _subtype='html')
-        msg_part = MIMEMultipart(_subtype='alternative')
-        msg_part.attach(msg_plain)
-        msg_part.attach(msg_html)
-        return msg_part
 
     @staticmethod
     def format_attachment(filepath):
@@ -165,24 +133,30 @@ class Email(object):
     def add_body_text(self, body_plain=False, body_html=False):
         """
         Add the Body Text to Email.
-        Throws AttributeError if email already has a body text.
+        Rises AttributeError if email already has a body text.
+        Rises ValueError if no body_plain or body_html provided.
         :param body_plain:  Plain Text for the Body
         :type body_plain:   str
         :param body_html:   HTML Text for the Body
         :type body_html:    str
-        :return:            True if updated, False if failed. 
-                            Exception if already added a body
+        :return:            True if updated, Raises an exception if failed. 
         :rtype:             bool
         """
         body_keys = self.body_parts.keys()
         if ('plain' in body_keys) or ('html' in body_keys):
             raise AttributeError('This email already has a body!')
             # TODO: create a new "local" email to replace the SELF with new body
-        try:
-            self.email.attach(
-                self.format_body(text_html=body_html, text_plain=body_plain))
-        except ValueError:
-            return False
+        if not (body_html or body_plain):
+            raise ValueError('No HTML or TEXT provided')
+        body_plain = body_plain or html2text(body_html)
+        body_html = body_html or body_plain
+        msg_plain = MIMEText(body_plain, _subtype='plain')
+        msg_html = MIMEText(body_html, _subtype='html')
+        msg_part = MIMEMultipart(_subtype='alternative')
+        msg_part.attach(msg_plain)
+        msg_part.attach(msg_html)
+        self.email.attach(msg_part)
+        return True
 
     def add_attachment(self, filepath):
         """
