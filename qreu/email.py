@@ -101,7 +101,7 @@ class Email(object):
         :rtype:           MIMEMultipart
         """
         if not (body_html and body_text):
-            raise Exception('No HTML or TEXT provided')
+            raise AttributeError('No HTML or TEXT provided')
         # TODO: txt2html + html2text
         if body_text and not body_html:
             msg_text = MIMEText(body_text, _subtype='plain')
