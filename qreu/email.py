@@ -101,7 +101,7 @@ class Email(object):
         :return:           MIME-Formatted body
         :rtype:            MIMEMultipart
         """
-        if not (text_html and text_plain):
+        if not (text_html or text_plain):
             raise ValueError('No HTML or TEXT provided')
         # TODO: txt2html + html2text
         if text_plain and not text_html:
