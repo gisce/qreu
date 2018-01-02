@@ -124,8 +124,16 @@ with description("Creating an Email"):
             expect(e.body_parts['plain']).to(equal(html))
             expect(e.body_parts['html']).to(equal(html))
         
-        with it('must raise exception if no body provided on body_maker'):
-            expect(Email.format_body).to(raise_error(ValueError))
+        with it('must return False if no body provided on add_body'):
+            e = Email()
+            expect(e.add_body_text()).to(be_false)
+
+        with it('must raise an exception if adding the body a 2nd time'):
+            e = Email()
+            e.add_body_text('some_body_text')
+            expect(
+                e.add_body_text
+            ).to(raise_error(AttributeError))
 
     with context("using kwargs"):
         with before.all:
