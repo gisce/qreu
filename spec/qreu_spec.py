@@ -113,8 +113,8 @@ with description("Creating an Email"):
                     'secret@example.com',
                     'email2@example.com'
                 ],
-                'body_text': 'Text-based body for the e-mail mel',
-                'body_html': 'Html-based body for the e-mail mel',
+                'body_text': 'Text-based body for the e-mail',
+                'body_html': 'Html-based body for the e-mail',
             }
         with it("must have all headers and text(basic MIMEMultipart)"):
             e = Email(**self.vals)
@@ -142,19 +142,19 @@ with description("Creating an Email"):
             expect(e.body_parts['plain']).to(equal(self.vals['body_text']))
             expect(e.body_parts['html']).to(equal(self.vals['body_html']))
 
-        with _it('Must parse text2html if no html provided'):
+        with _it('must parse text2html if no html provided'):
             vals = self.vals.copy()
             vals.pop('body_html')
             e = Email(**vals)
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['html']).to(equal(vals['body_text']))
 
-        with _it('Must parse html2text if no text provided'):
+        with _it('must parse html2text if no text provided'):
             vals = self.vals.copy()
             vals.pop('body_text')
             e = Email(**vals)
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(vals['body_html']))
         
-        with it('Must raise exception if no body provided on body_maker'):
+        with it('must raise exception if no body provided on body_maker'):
             expect(Email.format_body).to(raise_error(AttributeError))
