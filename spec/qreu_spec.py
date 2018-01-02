@@ -4,6 +4,8 @@ from qreu import Email
 from qreu.address import AddressList, Address
 import qreu.address
 
+from email.mime.multipart import MIMEMultipart
+
 from mamba import *
 from expects import *
 
@@ -206,3 +208,26 @@ with description("Creating an Email"):
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(vals['body_html']))
         
+        with it('must return the email as MIME-formated string'):
+            e = Email(**self.vals)
+            test_mail = MIMEMultipart()
+            to_address = self.vals.get('to', False)
+            if isinstance(to_address, list):
+                to_address = ','.join(to_address)
+            test_mail['To'] = to_address
+            subject = self.vals.get('subject', False)
+            test_mail['Subject'] = subject
+            from_address = self.vals.get('from', False)
+            test_mail['From'] = from_address
+            cc_address = self.vals.get('cc', False)
+            if isinstance(cc_address, list):
+                cc_address = ','.join(cc_address)
+            test_mail['CC'] = cc_address
+            bcc_address = self.vals.get('bcc', False)
+            if isinstance(bcc_address, list):
+                bcc_address = ','.join(bcc_address)
+            test_mail['BCC'] = bcc_address
+            body_text = self.vals.get('body_text', False)
+            body_html = self.vals.get('body_html', False)
+            test_mail.attach(Email.format_body(body_text, body_html))
+            expect(e.mime_string).to(equal(test_mail.as_string()))
