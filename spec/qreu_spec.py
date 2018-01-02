@@ -98,6 +98,22 @@ with description("Creating an Email"):
             expect(e.to).to(be_empty)
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
+
+        with it("must add body to Email with only plain text"):
+            e = Email()
+            plain = 'Text-based body for the e-mail'
+            e.add_body_text(body_plain=plain)
+            expect(e.body_parts).to(have_keys('plain', 'html'))
+            expect(e.body_parts['plain']).to(equal(plain))
+            expect(e.body_parts['html']).to(equal(plain))
+
+        with it("must add body to Email with only html text"):
+            e = Email()
+            html = 'Html-based body for the e-mail'
+            e.add_body_text(body_html=plain)
+            expect(e.body_parts).to(have_keys('plain', 'html'))
+            expect(e.body_parts['plain']).to(equal(html))
+            expect(e.body_parts['html']).to(equal(html))
     
     with context("using kwargs"):
         with before.all:
