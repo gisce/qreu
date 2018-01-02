@@ -100,8 +100,8 @@ with description("Creating an Email"):
             expect(e.recipients).to(be_empty)
     
     with context("using kwargs"):
-        with it("must have all args provided (basic MIMEMultipart)"):
-            vals = {
+        with before.all:
+            self.vals = {
                 'subject': 'Test message',
                 'to': ['to@example.com'],
                 'from': 'from@example.com',
@@ -113,19 +113,21 @@ with description("Creating an Email"):
                     'secret@example.com',
                     'email2@example.com'
                 ],
-                'body_text': 'Text-based body for the e-mail',
+                'body_text': 'Text-based body for the e-mail mel',
+                'body_html': 'Html-based body for the e-mail mel',
             }
-            e = Email(**vals)
-            expect(e.subject).to(equal(vals['subject']))
-            expect(e.to).to(equal(vals['to']))
-            expect(e.from_).to(equal(qreu.address.parse(vals['from'])))
-            expect(e.cc).to(equal([','.join(vals['cc'])]))
-            expect(e.bcc).to(equal([','.join(vals['bcc'])]))
-            recipients = list(set([
-                ','.join(vals['to']),
-                ','.join(vals['cc']),
-                ','.join(vals['bcc'])
-            ]))
+        with it("must have all headers and text(basic MIMEMultipart)"):
+            e = Email(**self.vals)
+            expect(e.subject).to(equal(self.vals['subject']))
+            expect(e.to).to(equal(self.vals['to']))
+            expect(e.from_).to(equal(qreu.address.parse(self.vals['from'])))
+            expect(e.cc).to(equal([','.join(self.vals['cc'])]))
+            expect(e.bcc).to(equal([','.join(self.vals['bcc'])]))
+            recipients = list({
+                ','.join(self.vals['to']),
+                ','.join(self.vals['cc']),
+                ','.join(self.vals['bcc'])
+            })
             failed_vals = []
             for elem in recipients:
                 if elem not in e.recipients:
