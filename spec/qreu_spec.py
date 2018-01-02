@@ -166,7 +166,13 @@ with description("Creating an Email"):
                     'email2@example.com'
                 ],
                 'body_text': 'Text-based body for the e-mail',
-                'body_html': 'Html-based body for the e-mail',
+                'body_html': (
+                    "<div>Test email:</div>"
+                    "<ul><li>This</li><li>Is</li><li>A</li><li>List</li></ul>"
+                    "<div><b>IMPORTANT sentence</b><br/>"
+                    "<i>italic sentence</i><br/>"
+                    "And <u>underline</u></div>"
+                )
             }
         with it("must have all headers and text(basic MIMEMultipart)"):
             e = Email(**self.vals)
