@@ -89,28 +89,6 @@ class Email(object):
         mail.email = email.message_from_string(raw_message)
         return mail
 
-    @staticmethod
-    def format_attachment(filepath):
-        """
-        Create an attachment part for a MIMEMultipart attach
-        :param filepath: Path to the file to attach
-        :type filepath:  str
-        :return:         Returns a MIMEApplication with the attachment
-        :rtype:          MIMEApplication
-        """
-        if not filepath:
-            raise ValueError('File Path not provided correctly!')
-        from os.path import isfile, abspath, isabs, basename
-        if not isabs(filepath):
-            filepath = abspath(filepath)
-        filename = basename(filepath)
-        attachment = MIMEApplication('octet-stream')
-        attachment.add_header(
-            'Content-Disposition', 'attachment; filename="%s"' % filename)
-        with open(filepath, 'rb') as reader:
-            attachment.set_payload(reader.read())
-        return attachment
-
     def header(self, header, default=None):
         """
         Get the email Header always in Unicode
@@ -158,7 +136,7 @@ class Email(object):
         self.email.attach(msg_part)
         return True
 
-    def add_attachment(self, filepath):
+    def add_attachment(self, fileobj):
         """
         Add an attachment file to the email
         :param filepath: Path to the file to attach
@@ -166,12 +144,17 @@ class Email(object):
         :return:         True if Added, False if failed
         :rtype:          bool
         """
-        try:
-            part = self.format_attachment(filepath)
-            self.email.attach(part)
-            return True
-        except ValueError:
-            return False
+        if not fileobj:
+            raise ValueError('File Obj not provided!')
+        from os.path import basename
+        attachment = MIMEApplication('octet-stream')
+        attachment.add_header(
+            'Content-Disposition',
+            'attachment; filename="%s"' % basename(fileobj.name)
+        )
+        attachment.set_payload(fileobj.read())
+        self.email.attach(attachment)
+        return True
 
     @property
     def is_reply(self):
