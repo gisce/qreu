@@ -68,6 +68,7 @@ class Email(object):
             self.email['Subject'] = subject
         from_address = kwargs.get('from', False)
         if from_address:
+        
             self.email['From'] = from_address
         cc_address = kwargs.get('cc', False)
         if cc_address:
@@ -106,8 +107,17 @@ class Email(object):
                     result.append(part[0].decode(part[1]))
                 else:
                     result.append(part[0])
-            header_value =  ''.join(result)
+            header_value = ''.join(result)
         return header_value
+
+    def add_header(self, header, value):
+        """
+        Encapsulate MIMEMultipart add_header method:
+        https://docs.python.org/2/library/email.message.html#email.message.Message.add_header
+        """
+        if not (header and value):
+            raise ValueError('Header not provided!')
+        return self.email.add_header(header, value)
 
     def add_body_text(self, body_plain=False, body_html=False):
         """
