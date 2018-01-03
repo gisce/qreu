@@ -152,8 +152,13 @@ with description("Creating an Email"):
             expect(files).to(equal([f_name, f_name]))
             for filename, filecontent in e.attachments:
                 with open(f_path) as f:
-                    attachment_str = str(base64.encodebytes(
-                        f.read().encode('utf-8')), 'utf-8')
+                    attachment_str = base64.encodestring(
+                        f.read().encode('utf-8'))
+                    try:
+                        attachment_str = str(attachment_str, 'utf-8')
+                    except TypeError:
+                        # Python 2.7 compat
+                        attachment_str = unicode(attachment_str)
                 expect(filecontent).to(equal(attachment_str))
 
         with it('must add an iostring as attachment to body'):
@@ -162,11 +167,19 @@ with description("Creating an Email"):
             e = Email()
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
-            with open(f_path) as f:
+            with open(f_path, 'r') as f:
                 f_data = f.read()
-            input_iostr = StringIO(f_data)
-            check_str = str(
-                base64.encodebytes(f_data.encode('utf-8')), 'utf-8')
+            try:
+                input_iostr = StringIO(f_data)
+            except TypeError:
+                # Python 2.7 compat
+                input_iostr = StringIO(unicode(f_data))
+            check_str = base64.encodestring(f_data.encode('utf-8'))
+            try:
+                check_str = str(check_str, 'utf-8')
+            except TypeError:
+                # Python 2.7 compat
+                check_str = unicode(check_str)
             e.add_attachment(input_buff=input_iostr, attname=f_name)
             for filename, filecontent in e.attachments:
                 expect(filecontent).to(equal(check_str))
@@ -179,8 +192,12 @@ with description("Creating an Email"):
             f_name = '0.txt'
             with open(f_path) as f:
                 f_data = f.read()
-            base64_str = str(
-                base64.encodebytes(f_data.encode('utf-8')), 'utf-8')
+            base64_str = base64.encodestring(f_data.encode('utf-8'))
+            try:
+                base64_str = str(base64_str, 'utf-8')
+            except TypeError:
+                # Python 2.7 compat
+                base64_str = unicode(base64_str)
             e.add_attachment(input_b64=base64_str, attname=f_name)
             for filename, filecontent in e.attachments:
                 expect(filecontent).to(equal(base64_str))

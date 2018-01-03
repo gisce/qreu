@@ -165,7 +165,8 @@ class Email(object):
             'attachment; filename="%s"' % basename(filename)
         )
         if input_buff:
-            attachment_str = base64.encodebytes(input_buff.read().encode('utf-8'))
+            attachment_str = base64.encodestring(
+                input_buff.read().encode('utf-8'))
         elif input_b64:
             attachment_str = input_b64
 
