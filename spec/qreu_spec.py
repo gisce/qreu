@@ -143,11 +143,11 @@ with description("Creating an Email"):
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
             with open(f_path) as f:
-                expect(e.add_attachment(fileobj=f)).to(be_true)
+                expect(e.add_attachment(input_buff=f)).to(be_true)
             expect(e.body_parts).to(have_key('files'))
             expect(e.body_parts['files']).to(equal([f_name]))
             with open(f_path) as f:
-                expect(e.add_attachment(fileobj=f)).to(be_true)
+                expect(e.add_attachment(input_buff=f)).to(be_true)
             files = [filename for filename, filecontent in e.attachments]
             expect(files).to(equal([f_name, f_name]))
             for filename, filecontent in e.attachments:
@@ -155,11 +155,36 @@ with description("Creating an Email"):
                     attachment_str = str(base64.encodebytes(
                         f.read().encode('utf-8')), 'utf-8')
                 expect(filecontent).to(equal(attachment_str))
+        
+        with it('must add an iostring as attachment to body'):
+            import base64
+            from io import StringIO
+            e = Email()
+            f_path = 'spec/fixtures/0.txt'
+            f_name = '0.txt'
+            with open(f_path) as f:
+                f_data = f.read()
+            input_iostr = StringIO(f_data)
+            check_str = str(
+                base64.encodebytes(f_data.encode('utf-8')), 'utf-8')
+            e.add_attachment(input_buff=input_iostr, attname=f_name)
+            for filename, filecontent in e.attachments:
+                expect(filecontent).to(equal(check_str))
 
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():
                 e = Email()
                 e.add_attachment(False)
+            
+            expect(call_wrongly).to(raise_error(ValueError))
+
+        with it('must raise an exception adding an attachment without name'):
+            import base64
+            from io import StringIO
+            def call_wrongly():
+                e = Email()
+                input_iostr = StringIO('Test string on StringIO')
+                e.add_attachment(input_iostr)
             
             expect(call_wrongly).to(raise_error(ValueError))
 
