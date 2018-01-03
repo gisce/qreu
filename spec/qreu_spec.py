@@ -155,7 +155,7 @@ with description("Creating an Email"):
                     attachment_str = str(base64.encodebytes(
                         f.read().encode('utf-8')), 'utf-8')
                 expect(filecontent).to(equal(attachment_str))
-        
+
         with it('must add an iostring as attachment to body'):
             import base64
             from io import StringIO
@@ -170,6 +170,20 @@ with description("Creating an Email"):
             e.add_attachment(input_buff=input_iostr, attname=f_name)
             for filename, filecontent in e.attachments:
                 expect(filecontent).to(equal(check_str))
+
+        with it('must add a base64 string as attachment to body'):
+            import base64
+            from io import StringIO
+            e = Email()
+            f_path = 'spec/fixtures/0.txt'
+            f_name = '0.txt'
+            with open(f_path) as f:
+                f_data = f.read()
+            base64_str = str(
+                base64.encodebytes(f_data.encode('utf-8')), 'utf-8')
+            e.add_attachment(input_b64=base64_str, attname=f_name)
+            for filename, filecontent in e.attachments:
+                expect(filecontent).to(equal(base64_str))
 
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():
