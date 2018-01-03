@@ -102,6 +102,22 @@ with description("Creating an Email"):
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
 
+        with it('must add header to Email'):
+            e = Email()
+            header_key = 'X-ORIG-HEADER'
+            header_value = 'Header String Value'
+            expect(e.header(header_key, False)).to(be_false)
+            e.add_header(header_key, header_value)
+            expect(e.header(header_key, False)).to(equal(header_value))
+
+        with it('must raise exception wrongly adding a header'):
+            def call_wrongly():
+                e = Email()
+                header_key = 'X-ORIG-HEADER'
+                expect(e.header(header_key, False)).to(be_false)
+                e.add_header(header_key, False)
+            expect(call_wrongly).to(raise_error(ValueError))
+
         with it('must add body to Email'):
             e = Email()
             plain = 'Text-based body for the e-mail'
@@ -127,7 +143,7 @@ with description("Creating an Email"):
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(plain))
             expect(e.body_parts['html']).to(equal(html))
-        
+  
         with it('must raise ValueError if no body provided on add_body'):
             e = Email()
             expect(e.add_body_text).to(raise_error(ValueError))
