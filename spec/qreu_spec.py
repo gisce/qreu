@@ -138,6 +138,7 @@ with description("Creating an Email"):
             expect(e.add_body_text).to(raise_error(AttributeError))
 
         with it('must add an attachments to body'):
+            import base64
             e = Email()
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
@@ -151,7 +152,9 @@ with description("Creating an Email"):
             expect(files).to(equal([f_name, f_name]))
             for filename, filecontent in e.attachments:
                 with open(f_path) as f:
-                    expect(filecontent).to(equal(f.read()))
+                    attachment_str = str(base64.encodebytes(
+                        f.read().encode('utf-8')), 'utf-8')
+                expect(filecontent).to(equal(attachment_str))
 
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():

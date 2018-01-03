@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import email
+from email.encoders import encode_base64
 from email.header import decode_header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -147,12 +148,19 @@ class Email(object):
         if not fileobj:
             raise ValueError('File Obj not provided!')
         from os.path import basename
+        import base64
         attachment = MIMEApplication('octet-stream')
         attachment.add_header(
             'Content-Disposition',
             'attachment; filename="%s"' % basename(fileobj.name)
         )
-        attachment.set_payload(fileobj.read())
+        attachment_str = base64.encodebytes(fileobj.read().encode('utf-8'))
+        attachment.set_charset('utf-8')
+        attachment.add_header('Content-Transfer-Encoding', 'base64')
+        attachment.set_payload(
+            attachment_str,
+            charset=attachment.get_charset()
+        )
         self.email.attach(attachment)
         return True
 
@@ -277,7 +285,10 @@ class Email(object):
     @property
     def attachments(self):
         """
-        Get all attachments of the email
+        Get all attachments of the email.
+        Return a Tuple as (AttachName, AttachContent) where the content is a
+        base64 based string
+        :return: Returns a Tuple generator as (AttachName, AttachContent)
         """
         for part in self.email.walk():
             if part.get_content_maintype() == 'application':
