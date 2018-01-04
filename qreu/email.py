@@ -68,7 +68,6 @@ class Email(object):
             self.email['Subject'] = subject
         from_address = kwargs.get('from', False)
         if from_address:
-        
             self.email['From'] = from_address
         cc_address = kwargs.get('cc', False)
         if cc_address:
@@ -128,7 +127,7 @@ class Email(object):
         :type body_plain:   str
         :param body_html:   HTML Text for the Body
         :type body_html:    str
-        :return:            True if updated, Raises an exception if failed. 
+        :return:            True if updated, Raises an exception if failed.
         :rtype:             bool
         """
         body_keys = self.body_parts.keys()
@@ -138,12 +137,12 @@ class Email(object):
         if not (body_html or body_plain):
             raise ValueError('No HTML or TEXT provided')
         body_plain = body_plain or html2text(body_html)
-        body_html = body_html or body_plain
         msg_plain = MIMEText(body_plain, _subtype='plain', _charset='utf-8')
-        msg_html = MIMEText(body_html, _subtype='html', _charset='utf-8')
         msg_part = MIMEMultipart(_subtype='alternative')
         msg_part.attach(msg_plain)
-        msg_part.attach(msg_html)
+        if body_html:
+            msg_html = MIMEText(body_html, _subtype='html', _charset='utf-8')
+            msg_part.attach(msg_html)
         self.email.attach(msg_part)
         return True
 
