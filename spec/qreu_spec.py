@@ -148,10 +148,27 @@ with description("Creating an Email"):
             e = Email()
             expect(e.add_body_text).to(raise_error(ValueError))
 
-        with it('must raise AtributeErrpr if adding the body a 2nd time'):
+        with it('must be able to add plain and html to the body separately'):
             e = Email()
-            e.add_body_text('some_body_text')
-            expect(e.add_body_text).to(raise_error(AttributeError))
+            html = 'Html-based body for the e-mail'
+            plain = html2text(html)
+            e.add_body_text(body_plain=plain)
+            e.add_body_text(body_html=html)
+            expect(e.body_parts).to(have_keys('plain', 'html'))
+            expect(e.body_parts['plain']).to(equal(plain))
+            expect(e.body_parts['html']).to(equal(html))
+
+        with it('must raise AtributeErrpr if adding the body a 2nd time'):
+            def call_wrongly_plain():
+                e = Email()
+                e.add_body_text(body_plain='some_body_text')
+                e.add_body_text(body_plain='some_body_text')
+            def call_wrongly_html():
+                e = Email()
+                e.add_body_text(body_html='some_body_text')
+                e.add_body_text(body_html='some_body_text')
+            expect(call_wrongly_plain).to(raise_error(AttributeError))
+            expect(call_wrongly_html).to(raise_error(AttributeError))
 
         with it('must add an attachments to body'):
             import base64
