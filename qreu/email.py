@@ -131,8 +131,10 @@ class Email(object):
         :rtype:             bool
         """
         body_keys = self.body_parts.keys()
-        if ('plain' in body_keys) or ('html' in body_keys):
-            raise AttributeError('This email already has a body!')
+        if body_plain and ('plain' in body_keys):
+            raise AttributeError('This email already has a plain body!')
+        if body_html and ('html' in body_keys):
+            raise AttributeError('This email already has an HTML body!')
             # TODO: create a new "local" email to replace the SELF with new body
         if not (body_html or body_plain):
             raise ValueError('No HTML or TEXT provided')
