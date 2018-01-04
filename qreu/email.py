@@ -139,8 +139,8 @@ class Email(object):
             raise ValueError('No HTML or TEXT provided')
         body_plain = body_plain or html2text(body_html)
         body_html = body_html or body_plain
-        msg_plain = MIMEText(body_plain, _subtype='plain')
-        msg_html = MIMEText(body_html, _subtype='html')
+        msg_plain = MIMEText(body_plain, _subtype='plain', _charset='utf-8')
+        msg_html = MIMEText(body_html, _subtype='html', _charset='utf-8')
         msg_part = MIMEMultipart(_subtype='alternative')
         msg_part.attach(msg_plain)
         msg_part.attach(msg_html)
