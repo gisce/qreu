@@ -68,7 +68,6 @@ class Email(object):
             self.email['Subject'] = subject
         from_address = kwargs.get('from', False)
         if from_address:
-        
             self.email['From'] = from_address
         cc_address = kwargs.get('cc', False)
         if cc_address:
@@ -128,22 +127,24 @@ class Email(object):
         :type body_plain:   str
         :param body_html:   HTML Text for the Body
         :type body_html:    str
-        :return:            True if updated, Raises an exception if failed. 
+        :return:            True if updated, Raises an exception if failed.
         :rtype:             bool
         """
         body_keys = self.body_parts.keys()
-        if ('plain' in body_keys) or ('html' in body_keys):
-            raise AttributeError('This email already has a body!')
+        if body_plain and ('plain' in body_keys):
+            raise AttributeError('This email already has a plain body!')
+        if body_html and ('html' in body_keys):
+            raise AttributeError('This email already has an HTML body!')
             # TODO: create a new "local" email to replace the SELF with new body
         if not (body_html or body_plain):
             raise ValueError('No HTML or TEXT provided')
         body_plain = body_plain or html2text(body_html)
-        body_html = body_html or body_plain
-        msg_plain = MIMEText(body_plain, _subtype='plain')
-        msg_html = MIMEText(body_html, _subtype='html')
+        msg_plain = MIMEText(body_plain, _subtype='plain', _charset='utf-8')
         msg_part = MIMEMultipart(_subtype='alternative')
         msg_part.attach(msg_plain)
-        msg_part.attach(msg_html)
+        if body_html:
+            msg_html = MIMEText(body_html, _subtype='html', _charset='utf-8')
+            msg_part.attach(msg_html)
         self.email.attach(msg_part)
         return True
 

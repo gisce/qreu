@@ -131,9 +131,9 @@ with description("Creating an Email"):
             e = Email()
             plain = 'Text-based body for the e-mail'
             e.add_body_text(body_plain=plain)
-            expect(e.body_parts).to(have_keys('plain', 'html'))
+            expect(e.body_parts).to(have_key('plain'))
+            expect(e.body_parts).to_not(have_key('html'))
             expect(e.body_parts['plain']).to(equal(plain))
-            expect(e.body_parts['html']).to(equal(plain))
 
         with it("must add body to Email with only html text"):
             e = Email()
@@ -148,10 +148,27 @@ with description("Creating an Email"):
             e = Email()
             expect(e.add_body_text).to(raise_error(ValueError))
 
-        with it('must raise AtributeErrpr if adding the body a 2nd time'):
+        with it('must be able to add plain and html to the body separately'):
             e = Email()
-            e.add_body_text('some_body_text')
-            expect(e.add_body_text).to(raise_error(AttributeError))
+            html = 'Html-based body for the e-mail'
+            plain = html2text(html)
+            e.add_body_text(body_plain=plain)
+            e.add_body_text(body_html=html)
+            expect(e.body_parts).to(have_keys('plain', 'html'))
+            expect(e.body_parts['plain']).to(equal(plain))
+            expect(e.body_parts['html']).to(equal(html))
+
+        with it('must raise AtributeErrpr if adding the body a 2nd time'):
+            def call_wrongly_plain():
+                e = Email()
+                e.add_body_text(body_plain='some_body_text')
+                e.add_body_text(body_plain='some_body_text')
+            def call_wrongly_html():
+                e = Email()
+                e.add_body_text(body_html='some_body_text')
+                e.add_body_text(body_html='some_body_text')
+            expect(call_wrongly_plain).to(raise_error(AttributeError))
+            expect(call_wrongly_html).to(raise_error(AttributeError))
 
         with it('must add an attachments to body'):
             import base64
@@ -284,13 +301,6 @@ with description("Creating an Email"):
             expect(e.body_parts['plain']).to(equal(self.vals['body_text']))
             expect(e.body_parts['html']).to(equal(self.vals['body_html']))
 
-        with it('must parse text2html if no html provided'):
-            vals = self.vals.copy()
-            vals.pop('body_html')
-            e = Email(**vals)
-            expect(e.body_parts).to(have_keys('plain', 'html'))
-            expect(e.body_parts['html']).to(equal(vals['body_text']))
-
         with it('must parse html2text if no text provided'):
             vals = self.vals.copy()
             vals.pop('body_text')
@@ -298,7 +308,7 @@ with description("Creating an Email"):
             e = Email(**vals)
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(body_text))
-        
+
         with it('must return the email as MIME-formated string'):
             e = Email(**self.vals)
             expect(
