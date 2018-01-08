@@ -34,6 +34,10 @@ with description('Parsing an Email'):
         c = Email.parse(self.raw_messages[2])
         expect(c.is_forwarded).to(be_true)
 
+    with it('must only remove FW and RV patterns'):
+        c = Email.parse("Subject: =?utf-8?q?Recordatori=3A_?=")
+        expect(c.subject).to(equal("Recordatori:"))
+
     with it('must known all the references'):
         c = Email.parse(self.raw_messages[3])
         expect(c.references).to(contain_exactly(

@@ -15,38 +15,38 @@ import re
 from qreu import address
 
 
-RE_PATTERNS = re.compile('\s*({0})'.format('|'.join(
+RE_PATTERNS = re.compile('({0})'.format('|'.join(
     [
-        'SV:',
-        'Antw:',
-        'VS:',
-        'RE:',
-        'AW:',
-        'Vá:',
-        'R:'
-        'RIF:',
-        'SV:',
-        'BLS:',
-        'Odp:',
-        'YNT:'
+        '^SV:',
+        '^Antw:',
+        '^VS:',
+        '^RE:',
+        '^AW:',
+        '^Vá:',
+        '^R:'
+        '^RIF:',
+        '^SV:',
+        '^BLS:',
+        '^Odp:',
+        '^YNT:'
     ])), re.IGNORECASE)
 
 
-FW_PATTERNS = re.compile('\s*({0})'.format('|'.join(
+FW_PATTERNS = re.compile('({0})'.format('|'.join(
     [
-        'VS:',
-        'Doorst:',
-        'VL:',
-        'TR:',
-        'WG:',
-        'Továbbítás:',
-        'I:',
-        'FS:',
-        'VB:',
-        'RV:',
-        'ENC:',
-        'PD:',
-        'İLT'
+        '^VS:',
+        '^Doorst:',
+        '^VL:',
+        '^TR:',
+        '^WG:',
+        '^Továbbítás:',
+        '^I:',
+        '^FS:',
+        '^VB:',
+        '^RV:',
+        '^ENC:',
+        '^PD:',
+        '^İLT'
     ])), re.IGNORECASE)
 
 
