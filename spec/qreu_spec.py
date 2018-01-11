@@ -305,6 +305,20 @@ with description("Creating an Email"):
             expect(e.body_parts['plain']).to(equal(self.vals['body_text']))
             expect(e.body_parts['html']).to(equal(self.vals['body_html']))
 
+        with it('must add addresses correctly as "name" <address>'):
+            addresses = [
+                'test <testing@example.com>',
+                'spécial <special@example.com'
+            ]
+            expected_address = [','.join(['test <testing@example.com>',
+                 '"spécial" <special@example.com>'])]
+            e = Email(to=addresses)
+            expect(e.to).to(equal(expected_address))
+            e = Email(cc=addresses)
+            expect(e.cc).to(equal(expected_address))
+            e = Email(bcc=addresses)
+            expect(e.bcc).to(equal(expected_address))
+
         with it('must parse html2text if no text provided'):
             vals = self.vals.copy()
             vals.pop('body_text')
