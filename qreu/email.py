@@ -58,18 +58,11 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
-        recipients_headers = ['to', 'cc', 'bcc']
-        for header_name in recipients_headers + ['subject', 'from', '']:
+        for header_name in ['to', 'cc', 'bcc', 'subject', 'from', '']:
             value = kwargs.get(header_name, False)
             if not value:
                 continue
-            if (
-                    isinstance(value, list) and
-                    header_name in recipients_headers
-            ):
-                value = ','.join(value)
-            header_value = Header(value, charset='utf-8').encode()
-            self.email[header_name] = header_value
+            self.add_header(header_name, value)
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
@@ -103,12 +96,23 @@ class Email(object):
 
     def add_header(self, header, value):
         """
-        Encapsulate MIMEMultipart add_header method:
-        https://docs.python.org/2/library/email.message.html#email.message.Message.add_header
+        Add (or replace) the header `key` with the UTF-8 encoded `value`
+        Also parses lists if a recipient header (to, cc or bcc)
+        :param header:  Key of the MIME Message Header
+        :type header:   str
+        :param value:   Value of the MIME Message Header
+        :type value:    str, list
+        :return:        New Header Value
+        :raises:        ValueError
         """
         if not (header and value):
             raise ValueError('Header not provided!')
-        return self.email.add_header(header, value)
+        recipients_headers = ['to', 'cc', 'bcc']
+        if isinstance(value, list) and header.lower() in recipients_headers:
+            value = ','.join(value)
+        header_value = Header(value, charset='utf-8').encode()
+        self.email[header] = header_value
+        return header_value
 
     def add_body_text(self, body_plain=False, body_html=False):
         """
