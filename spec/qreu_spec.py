@@ -313,7 +313,6 @@ with description("Creating an Email"):
             expect(e.cc).to(equal([address]))
             e = Email(bcc=address)
             expect(e.bcc).to(equal([address]))
-            print(e.mime_string)
 
         with it('must parse html2text if no text provided'):
             vals = self.vals.copy()
