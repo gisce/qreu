@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import email
 from email.encoders import encode_base64
-from email.header import decode_header
+from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -58,27 +58,18 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
-        to_address = kwargs.get('to', False)
-        if to_address:
-            if isinstance(to_address, list):
-                to_address = ','.join(to_address)
-            self.email['To'] = to_address
-        subject = kwargs.get('subject', False)
-        if subject:
-            self.email['Subject'] = subject
-        from_address = kwargs.get('from', False)
-        if from_address:
-            self.email['From'] = from_address
-        cc_address = kwargs.get('cc', False)
-        if cc_address:
-            if isinstance(cc_address, list):
-                cc_address = ','.join(cc_address)
-            self.email['CC'] = cc_address
-        bcc_address = kwargs.get('bcc', False)
-        if bcc_address:
-            if isinstance(bcc_address, list):
-                bcc_address = ','.join(bcc_address)
-            self.email['BCC'] = bcc_address
+        recipients_headers = ['to', 'cc', 'bcc']
+        for header_name in recipients_headers + ['subject', 'from', '']:
+            value = kwargs.get(header_name, False)
+            if not value:
+                continue
+            if (
+                    isinstance(value, list) and
+                    header_name in recipients_headers
+            ):
+                value = ','.join(value)
+            header_value = Header(value, charset='utf-8').encode()
+            self.email[header_name] = header_value
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
@@ -107,6 +98,7 @@ class Email(object):
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
+        
         return header_value
 
     def add_header(self, header, value):
