@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import email
 from email.encoders import encode_base64
-from email.header import decode_header
+from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -58,27 +58,11 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
-        to_address = kwargs.get('to', False)
-        if to_address:
-            if isinstance(to_address, list):
-                to_address = ','.join(to_address)
-            self.email['To'] = to_address
-        subject = kwargs.get('subject', False)
-        if subject:
-            self.email['Subject'] = subject
-        from_address = kwargs.get('from', False)
-        if from_address:
-            self.email['From'] = from_address
-        cc_address = kwargs.get('cc', False)
-        if cc_address:
-            if isinstance(cc_address, list):
-                cc_address = ','.join(cc_address)
-            self.email['CC'] = cc_address
-        bcc_address = kwargs.get('bcc', False)
-        if bcc_address:
-            if isinstance(bcc_address, list):
-                bcc_address = ','.join(bcc_address)
-            self.email['BCC'] = bcc_address
+        for header_name in ['to', 'cc', 'bcc', 'subject', 'from', '']:
+            value = kwargs.get(header_name, False)
+            if not value:
+                continue
+            self.add_header(header_name, value)
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
@@ -107,16 +91,28 @@ class Email(object):
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
+        
         return header_value
 
     def add_header(self, header, value):
         """
-        Encapsulate MIMEMultipart add_header method:
-        https://docs.python.org/2/library/email.message.html#email.message.Message.add_header
+        Add (or replace) the header `key` with the UTF-8 encoded `value`
+        Also parses lists if a recipient header (to, cc or bcc)
+        :param header:  Key of the MIME Message Header
+        :type header:   str
+        :param value:   Value of the MIME Message Header
+        :type value:    str, list
+        :return:        New Header Value
+        :raises:        ValueError
         """
         if not (header and value):
             raise ValueError('Header not provided!')
-        return self.email.add_header(header, value)
+        recipients_headers = ['to', 'cc', 'bcc']
+        if isinstance(value, list) and header.lower() in recipients_headers:
+            value = ','.join(value)
+        header_value = Header(value, charset='utf-8').encode()
+        self.email[header] = header_value
+        return header_value
 
     def add_body_text(self, body_plain=False, body_html=False):
         """
