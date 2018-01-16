@@ -11,6 +11,16 @@ from qreu import Email
 
 with description('Sendcontext'):
     with before.all:
+        class TempDir(object):
+            def __init__(self):
+                self.dir = tempfile.mkdtemp()
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                shutil.rmtree(self.dir)
+        self.temp_dir = TempDir
         self.test_mail = Email(
             From='me@example.com',
             To='you@example.com',
@@ -26,16 +36,7 @@ with description('Sendcontext'):
                 equal(self.test_mail.mime_string))
 
     with it('must write the mail as a string to a file with FileSender'):
-        class TempDir(object):
-            def __init__(self):
-                self.dir = tempfile.mkdtemp()
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, exc_type, exc_val, exc_tb):
-                shutil.rmtree(self.dir)
-        with TempDir() as tmpdir:
+        with self.temp_dir() as tmpdir:
             filename = tempfile.mktemp(dir=tmpdir.dir)
             with FileSender(filename) as sender:
                 sender.send(self.test_mail)
