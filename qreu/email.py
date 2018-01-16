@@ -2,7 +2,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import email
-from email.encoders import encode_base64
 from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -91,7 +90,7 @@ class Email(object):
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
-        
+
         return header_value
 
     def add_header(self, header, value):
