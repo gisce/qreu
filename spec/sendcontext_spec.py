@@ -63,3 +63,17 @@ with description('Sendcontext'):
                 ssl_certfile='ssl_certfile'
             ) as sender:
                 sender.send(self.test_mail)
+
+    with it('must send different emails on multi-layered contexts'):
+        with self.temp_dir() as tmpdir:
+            filename = tempfile.mktemp(dir=tmpdir.dir)
+            with Sender() as base_sender:
+                expect(base_sender.send(self.test_mail)).to(
+                    equal(self.test_mail.mime_string))
+                with FileSender(filename) as file_sender:
+                    file_sender.send(self.test_mail)
+                with open(filename, 'r') as file_mail:
+                    expect(file_mail.read()).to(
+                        equal(self.test_mail.mime_string))
+                expect(base_sender.send(self.test_mail)).to(
+                    equal(self.test_mail.mime_string))
