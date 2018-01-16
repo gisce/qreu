@@ -23,7 +23,7 @@ with description('Sendcontext'):
             expect(sender.send(self.test_mail)).to(
                 equal(self.test_mail.mime_string))
 
-    with _it('must write the mail as a string to a file with FileSender'):
+    with it('must write the mail as a string to a file with FileSender'):
         filename = 'test_filesender'
         with FileSender(filename) as sender:
             sender.send(self.test_mail)
