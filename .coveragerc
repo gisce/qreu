@@ -1,2 +1,6 @@
 [run]
 source = ./qreu
+omit = qreu/local.py
+
+[report]
+omit = qreu/local.py
