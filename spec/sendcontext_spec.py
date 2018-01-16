@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+from mamba import *
+from expects import *
+from mock import patch, Mock
+import shutil
+import tempfile
 
 from qreu.sendcontext import *
 from qreu import Email
-
-from mamba import *
-from expects import *
-
-from mock import patch, Mock
 
 with description('Sendcontext'):
     with before.all:
@@ -26,12 +26,22 @@ with description('Sendcontext'):
                 equal(self.test_mail.mime_string))
 
     with it('must write the mail as a string to a file with FileSender'):
-        filename = 'test_filesender'
-        with FileSender(filename) as sender:
-            sender.send(self.test_mail)
-        with open(filename, 'r') as test_file:
-            mail_text = test_file.read()
-        expect(mail_text).to(equal(self.test_mail.mime_string))
+        class TempDir(object):
+            def __init__(self):
+                self.dir = tempfile.mkdtemp()
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                shutil.rmtree(self.dir)
+        with TempDir() as tmpdir:
+            filename = tempfile.mktemp(dir=tmpdir.dir)
+            with FileSender(filename) as sender:
+                sender.send(self.test_mail)
+            with open(filename, 'r') as test_file:
+                mail_text = test_file.read()
+            expect(mail_text).to(equal(self.test_mail.mime_string))
 
     with it('must "send" via smtp the email with SMTPSender'):
         with patch('qreu.sendcontext.SMTP') as mocked_conn:
