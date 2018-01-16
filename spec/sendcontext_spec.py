@@ -7,6 +7,8 @@ from qreu import Email
 from mamba import *
 from expects import *
 
+from mock import patch, Mock
+
 with description('Sendcontext'):
     with before.all:
         self.test_mail = Email(
@@ -31,7 +33,22 @@ with description('Sendcontext'):
             mail_text = test_file.read()
         expect(mail_text).to(equal(self.test_mail.mime_string))
 
-    with _it('must "send" via smtp the email with SMTPSender'):
-        # TODO: Mock it
-        with SMTPSender(host='', user='', passwd='', ssl=True) as sender:
-            sender.send(self.test_mail)
+    with it('must "send" via smtp the email with SMTPSender'):
+        with patch('qreu.sendcontext.SMTP') as mocked_conn:
+            # Mock the SMTP connection
+            smtp_mocked = Mock()
+            smtp_mocked.login.return_value = True
+            smtp_mocked.starttls.return_value = True
+            smtp_mocked.login.return_value = True
+            smtp_mocked.send.return_value = True
+            smtp_mocked.sendmail.return_value = True
+            smtp_mocked.close.return_value = True
+            mocked_conn.return_value = smtp_mocked
+            with SMTPSender(
+                host='host',
+                user='user',
+                passwd='passwd',
+                ssl_keyfile='ssl_keyfile',
+                ssl_certfile='ssl_certfile'
+            ) as sender:
+                sender.send(self.test_mail)
