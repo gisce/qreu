@@ -9,7 +9,7 @@ import tempfile
 from qreu.sendcontext import *
 from qreu import Email
 
-with description('Sendcontext'):
+with description('Senders'):
     with before.all:
         class TempDir(object):
             def __init__(self):
@@ -77,3 +77,10 @@ with description('Sendcontext'):
                         equal(self.test_mail.mime_string))
                 expect(base_sender.send(self.test_mail)).to(
                     equal(self.test_mail.mime_string))
+
+    with context('Bad Sender inits'):
+        with it('must raise ValueError if no filename provided to FileSender'):
+            def call_wrongly():
+                FileSender(False)
+
+            expect(call_wrongly).to(raise_error(ValueError))
