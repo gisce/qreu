@@ -74,6 +74,50 @@ class Email(object):
         mail.email = email.message_from_string(raw_message)
         return mail
 
+    @staticmethod
+    def fix_header_name(header_name):
+        """
+        Fix header names according to RFC 4021:
+        https://tools.ietf.org/html/rfc4021#section-2.1.5
+        :param header_name: Name of the header to fix
+        :type header_name:  str
+        :return:            Fixed name of the header
+        :rtype:             str
+        """
+        headers = [
+            'Date', 'From', 'Sender', 'Reply-To', 'To', 'Cc', 'Bcc',
+            'Message-ID', 'In-Reply-To', 'References', 'Subject', 'Comments',
+            'Keywords', 'Resent-Date', 'Resent-From', 'Resent-Sender',
+            'Resent-To', 'Resent-Cc', 'Resent-Bcc', 'Resent-Reply-To',
+            'Resent-Message-ID', 'Return-Path', 'Received', 'Encrypted',
+            'Disposition-Notification-To', 'Disposition-Notification-Options',
+            'Accept-Language', 'Original-Message-ID', 'PICS-Label', 'Encoding',
+            'List-Archive', 'List-Help', 'List-ID', 'List-Owner', 'List-Post',
+            'List-Subscribe', 'List-Unsubscribe', 'Message-Context',
+            'DL-Expansion-History', 'Alternate-Recipient',
+            'Original-Encoded-Information-Types', 'Content-Return',
+            'Generate-Delivery-Report', 'Prevent-NonDelivery-Report',
+            'Obsoletes', 'Supersedes', 'Content-Identifier', 'Delivery-Date',
+            'Expiry-Date', 'Expires', 'Reply-By', 'Importance',
+            'Incomplete-Copy', 'Priority', 'Sensitivity', 'Language',
+            'Conversion', 'Conversion-With-Loss', 'Message-Type',
+            'Autosubmitted', 'Autoforwarded', 'Discarded-X400-IPMS-Extensions',
+            'Discarded-X400-MTS-Extensions', 'Disclose-Recipients',
+            'Deferred-Delivery', 'Latest-Delivery-Time',
+            'Originator-Return-Address', 'X400-Content-Identifier',
+            'X400-Content-Return', 'X400-Content-Type', 'X400-MTS-Identifier',
+            'X400-Originator', 'X400-Received', 'X400-Recipients', 'X400-Trace',
+            'MIME-Version', 'Content-ID', 'Content-Description',
+            'Content-Transfer-Encoding', 'Content-Type', 'Content-Base',
+            'Content-Location', 'Content-features', 'Content-Disposition',
+            'Content-Language', 'Content-Alternative', 'Content-MD5',
+            'Content-Duration',
+        ]
+        for header in headers:
+            if header_name.lower() == header.lower():
+                return header
+        return ''
+
     def header(self, header, default=None):
         """
         Get the email Header always in Unicode
@@ -111,6 +155,7 @@ class Email(object):
         if isinstance(value, list) and header.lower() in recipients_headers:
             value = ','.join(value)
         header_value = Header(value, charset='utf-8').encode()
+        header = Email.fix_header_name(header)
         self.email[header] = header_value
         return header_value
 
