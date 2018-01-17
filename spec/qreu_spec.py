@@ -106,12 +106,17 @@ with description("Creating an Email"):
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
 
-        with it('must add header to Email'):
+        with it('must add any header to Email'):
             e = Email()
             header_key = 'X-ORIG-HEADER'
             header_value = 'Header String Value'
             expect(e.header(header_key, False)).to(be_false)
+            # Custom Header
             e.add_header(header_key, header_value)
+            # Recipient Header using an address
+            e.add_header('to', 'someone@example.com')
+            # Recipient Header using a list
+            e.add_header('cc', ['someone@example.com', 'theboss@example.com'])
             expect(e.header(header_key, False)).to(equal(header_value))
 
         with it('must raise exception wrongly adding a header'):
@@ -147,7 +152,7 @@ with description("Creating an Email"):
             expect(e.body_parts).to(have_keys('plain', 'html'))
             expect(e.body_parts['plain']).to(equal(plain))
             expect(e.body_parts['html']).to(equal(html))
-  
+
         with it('must raise ValueError if no body provided on add_body'):
             e = Email()
             expect(e.add_body_text).to(raise_error(ValueError))
@@ -311,7 +316,7 @@ with description("Creating an Email"):
             expect(e.to).to(equal([address]))
             e = Email(cc=address)
             expect(e.cc).to(equal([address]))
-            e = Email(bcc=address)
+            e = Email(bcc=[address])
             expect(e.bcc).to(equal([address]))
 
         with it('must parse html2text if no text provided'):
