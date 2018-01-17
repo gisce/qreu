@@ -135,7 +135,6 @@ class Email(object):
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
-        
         return header_value
 
     def add_header(self, header, value):
@@ -152,10 +151,14 @@ class Email(object):
         if not (header and value):
             raise ValueError('Header not provided!')
         recipients_headers = ['to', 'cc', 'bcc']
-        if isinstance(value, list) and header.lower() in recipients_headers:
-            value = ','.join(value)
-        header_value = Header(value, charset='utf-8').encode()
-        header = Email.fix_header_name(header)
+        if header.lower() in recipients_headers:
+            if isinstance(value, list):
+                value = ','.join(value)
+            header_value = str(value)
+        else:
+            header_value = Header(value, charset='utf-8').encode()
+        # Get correct header name or add the one provided if custom header key
+        header = Email.fix_header_name(header) or header
         self.email[header] = header_value
         return header_value
 
