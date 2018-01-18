@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import email
-from email.encoders import encode_base64
+from email.utils import formataddr
 from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -132,6 +132,8 @@ class Email(object):
             for part in decode_header(header_value):
                 if part[1]:
                     result.append(part[0].decode(part[1]))
+                elif isinstance(part[0], bytes):
+                    result.append(part[0].decode('utf-8'))
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
@@ -153,8 +155,17 @@ class Email(object):
         recipients_headers = ['to', 'cc', 'bcc']
         if header.lower() in recipients_headers:
             if isinstance(value, list):
-                value = ','.join(value)
-            header_value = str(value)
+                header_value = []
+                for addr in value:
+                    mail_addr = address.parse(addr)
+                    header_value.append(formataddr((
+                        mail_addr.display_name, mail_addr.address)))
+                header_value = ','.join(header_value)
+            else:
+                mail_addr = address.parse(value)
+                header_value = formataddr((
+                        mail_addr.display_name, mail_addr.address))
+            header_value = Header(header_value).encode()
         else:
             header_value = Header(value, charset='utf-8').encode()
         # Get correct header name or add the one provided if custom header key
@@ -268,6 +279,7 @@ class Email(object):
         subject = re.sub(RE_PATTERNS, '', self.header('Subject', ''))
         subject = re.sub(FW_PATTERNS, '', subject)
         return subject.strip()
+                
 
     @property
     def references(self):
