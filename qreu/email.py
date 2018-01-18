@@ -168,7 +168,7 @@ class Email(object):
                 #    so the item is encoded properly
                 # - The encoded display name and the address are joined
                 #    into the Header of the email
-                mail_addr = address.parse(str(addr))
+                mail_addr = address.parse(addr)
                 display_name = Header(
                     mail_addr.display_name, charset='utf-8').encode()
                 if display_name:
