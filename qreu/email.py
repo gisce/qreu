@@ -9,6 +9,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from html2text import html2text
+from six import PY2
 
 import re
 
@@ -153,19 +154,39 @@ class Email(object):
         if not (header and value):
             raise ValueError('Header not provided!')
         recipients_headers = ['to', 'cc', 'bcc']
-        if header.lower() in recipients_headers:
-            if isinstance(value, list):
-                header_value = []
-                for addr in value:
-                    mail_addr = address.parse(addr)
-                    header_value.append(formataddr((
-                        mail_addr.display_name, mail_addr.address)))
-                header_value = ','.join(header_value)
-            else:
-                mail_addr = address.parse(value)
-                header_value = formataddr((
-                        mail_addr.display_name, mail_addr.address))
-            header_value = Header(header_value).encode()
+        if header.lower() in recipients_headers or header.lower() == 'from':
+            if not isinstance(value, list):
+                value = [value]
+            header_value = []
+            for addr in value:
+                # For each address in the recipients headers
+                # Do the Header Object
+                # PY3 works fine with Header(values, charset='utf-8')
+                # PY2:
+                # - Does not escape correctly the unicode values
+                # - Must encode the display name as a HEADER
+                #    so the item is encoded properly
+                # - The encoded display name and the address are joined
+                #    into the Header of the email
+                mail_addr = address.parse(str(addr))
+                display_name = Header(
+                    mail_addr.display_name, charset='utf-8').encode()
+                if display_name:
+                    # decode_header method in PY2 does not look for closed items
+                    # so a ' ' separator is required between items of a Header
+                    if PY2:
+                        base_addr = '{} <{}>'
+                    else:
+                        base_addr = '{}<{}>'
+                    header_value.append(
+                        base_addr.format(
+                            display_name,
+                            mail_addr.address
+                        ).strip()
+                    )
+                else:
+                    header_value.append(mail_addr.address)
+            header_value = ','.join(header_value)
         else:
             header_value = Header(value, charset='utf-8').encode()
         # Get correct header name or add the one provided if custom header key
@@ -257,7 +278,7 @@ class Email(object):
         """
         return (not self.is_forwarded and (
             bool(self.header('In-Reply-To'))
-                or bool(re.match(RE_PATTERNS, self.header('Subject', '')))
+            or bool(re.match(RE_PATTERNS, self.header('Subject', '')))
         ))
 
     @property
@@ -279,7 +300,6 @@ class Email(object):
         subject = re.sub(RE_PATTERNS, '', self.header('Subject', ''))
         subject = re.sub(FW_PATTERNS, '', subject)
         return subject.strip()
-                
 
     @property
     def references(self):
