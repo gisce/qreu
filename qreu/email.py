@@ -2,7 +2,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import email
-from email.utils import formataddr
 from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
