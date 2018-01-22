@@ -7,7 +7,8 @@ setup(
     packages=find_packages(),
     url='https://github.com/gisce/qreu',
     install_requires=[
-        'html2text'
+        'html2text',
+        'six'
     ],
     license='MIT',
     author='GISCE-TI, S.L.',
