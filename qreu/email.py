@@ -12,6 +12,7 @@ from html2text import html2text
 import re
 
 from qreu import address
+from qreu.sendcontext import get_current_sender
 
 
 RE_PATTERNS = re.compile('({0})'.format('|'.join(
@@ -72,6 +73,12 @@ class Email(object):
         mail = Email()
         mail.email = email.message_from_string(raw_message)
         return mail
+
+    def send(self):
+        """
+        Send himself using the current sendercontext
+        """
+        return get_current_sender().send(self)
 
     def header(self, header, default=None):
         """

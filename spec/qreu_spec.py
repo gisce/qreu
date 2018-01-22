@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 from qreu import Email
 from qreu.address import AddressList, Address
+from qreu.sendcontext import Sender
 import qreu.address
 
 from email.mime.multipart import MIMEMultipart
@@ -243,7 +244,7 @@ with description("Creating an Email"):
             def call_wrongly():
                 e = Email()
                 e.add_attachment(False)
-            
+
             expect(call_wrongly).to(raise_error(ValueError))
 
         with it('must raise an exception adding an attachment without name'):
@@ -253,7 +254,7 @@ with description("Creating an Email"):
                 e = Email()
                 input_iostr = StringIO('Test string on StringIO')
                 e.add_attachment(input_iostr)
-            
+
             expect(call_wrongly).to(raise_error(ValueError))
 
     with context("using kwargs"):
@@ -327,3 +328,8 @@ with description("Creating an Email"):
             expect(
                 Email.parse(e.mime_string).mime_string
             ).to(equal(e.mime_string))
+
+        with it('must send himself using current sendcontext'):
+            e = Email(**self.vals)
+            with Sender():
+                expect(e.send()).to(equal(e.mime_string))
