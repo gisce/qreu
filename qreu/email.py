@@ -13,6 +13,7 @@ from six import PY2
 import re
 
 from qreu import address
+from qreu.sendcontext import get_current_sender
 
 
 RE_PATTERNS = re.compile('({0})'.format('|'.join(
@@ -58,7 +59,7 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
-        for header_name in ['to', 'cc', 'bcc', 'subject', 'from', '']:
+        for header_name in ['subject', 'from', 'to', 'cc', 'bcc']:
             value = kwargs.get(header_name, False)
             if not value:
                 continue
@@ -73,6 +74,12 @@ class Email(object):
         mail = Email()
         mail.email = email.message_from_string(raw_message)
         return mail
+
+    def send(self):
+        """
+        Send himself using the current sendercontext
+        """
+        return get_current_sender().send(self)
 
     @staticmethod
     def fix_header_name(header_name):
@@ -137,6 +144,7 @@ class Email(object):
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
+
         return header_value
 
     def add_header(self, header, value):
