@@ -57,7 +57,7 @@ class FileSender(Sender):
 class SMTPSender(Sender):
     def __init__(
             self, host='localhost', port=0, user='', passwd='',
-            ssl_keyfile='', ssl_certfile=''
+            ssl_keyfile='', ssl_certfile='', tls=False
     ):
         super(SMTPSender, self).__init__(
             _host=host,
@@ -65,12 +65,13 @@ class SMTPSender(Sender):
             _user=user,
             _passwd=passwd,
             _ssl_keyfile=ssl_keyfile,
-            _ssl_certfile=ssl_certfile
+            _ssl_certfile=ssl_certfile,
+            _tls=tls or (ssl_certfile and ssl_keyfile)
         )
 
     def __enter__(self):
         self._connection = SMTP(host=self._host, port=self._port)
-        if self._ssl_keyfile and self._ssl_certfile:
+        if self._tls:
             self._connection.starttls(
                 keyfile=self._ssl_keyfile, certfile=self._ssl_certfile)
         if self._user and self._passwd:

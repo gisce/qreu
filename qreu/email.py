@@ -79,7 +79,7 @@ class Email(object):
         """
         Send himself using the current sendercontext
         """
-        return get_current_sender().send(self)
+        return get_current_sender().sendmail(self)
 
     @staticmethod
     def fix_header_name(header_name):
