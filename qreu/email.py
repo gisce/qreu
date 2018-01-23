@@ -2,13 +2,13 @@
 from __future__ import absolute_import, unicode_literals
 
 import email
-from email.encoders import encode_base64
 from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from html2text import html2text
+from six import PY2
 
 import re
 
@@ -74,6 +74,50 @@ class Email(object):
         mail.email = email.message_from_string(raw_message)
         return mail
 
+    @staticmethod
+    def fix_header_name(header_name):
+        """
+        Fix header names according to RFC 4021:
+        https://tools.ietf.org/html/rfc4021#section-2.1.5
+        :param header_name: Name of the header to fix
+        :type header_name:  str
+        :return:            Fixed name of the header
+        :rtype:             str
+        """
+        headers = [
+            'Date', 'From', 'Sender', 'Reply-To', 'To', 'Cc', 'Bcc',
+            'Message-ID', 'In-Reply-To', 'References', 'Subject', 'Comments',
+            'Keywords', 'Resent-Date', 'Resent-From', 'Resent-Sender',
+            'Resent-To', 'Resent-Cc', 'Resent-Bcc', 'Resent-Reply-To',
+            'Resent-Message-ID', 'Return-Path', 'Received', 'Encrypted',
+            'Disposition-Notification-To', 'Disposition-Notification-Options',
+            'Accept-Language', 'Original-Message-ID', 'PICS-Label', 'Encoding',
+            'List-Archive', 'List-Help', 'List-ID', 'List-Owner', 'List-Post',
+            'List-Subscribe', 'List-Unsubscribe', 'Message-Context',
+            'DL-Expansion-History', 'Alternate-Recipient',
+            'Original-Encoded-Information-Types', 'Content-Return',
+            'Generate-Delivery-Report', 'Prevent-NonDelivery-Report',
+            'Obsoletes', 'Supersedes', 'Content-Identifier', 'Delivery-Date',
+            'Expiry-Date', 'Expires', 'Reply-By', 'Importance',
+            'Incomplete-Copy', 'Priority', 'Sensitivity', 'Language',
+            'Conversion', 'Conversion-With-Loss', 'Message-Type',
+            'Autosubmitted', 'Autoforwarded', 'Discarded-X400-IPMS-Extensions',
+            'Discarded-X400-MTS-Extensions', 'Disclose-Recipients',
+            'Deferred-Delivery', 'Latest-Delivery-Time',
+            'Originator-Return-Address', 'X400-Content-Identifier',
+            'X400-Content-Return', 'X400-Content-Type', 'X400-MTS-Identifier',
+            'X400-Originator', 'X400-Received', 'X400-Recipients', 'X400-Trace',
+            'MIME-Version', 'Content-ID', 'Content-Description',
+            'Content-Transfer-Encoding', 'Content-Type', 'Content-Base',
+            'Content-Location', 'Content-features', 'Content-Disposition',
+            'Content-Language', 'Content-Alternative', 'Content-MD5',
+            'Content-Duration',
+        ]
+        for header in headers:
+            if header_name.lower() == header.lower():
+                return header
+        return ''
+
     def header(self, header, default=None):
         """
         Get the email Header always in Unicode
@@ -88,10 +132,11 @@ class Email(object):
             for part in decode_header(header_value):
                 if part[1]:
                     result.append(part[0].decode(part[1]))
+                elif isinstance(part[0], bytes):
+                    result.append(part[0].decode('utf-8'))
                 else:
                     result.append(part[0])
             header_value = ''.join(result)
-        
         return header_value
 
     def add_header(self, header, value):
@@ -108,9 +153,43 @@ class Email(object):
         if not (header and value):
             raise ValueError('Header not provided!')
         recipients_headers = ['to', 'cc', 'bcc']
-        if isinstance(value, list) and header.lower() in recipients_headers:
-            value = ','.join(value)
-        header_value = Header(value, charset='utf-8').encode()
+        if header.lower() in recipients_headers or header.lower() == 'from':
+            if not isinstance(value, list):
+                value = [value]
+            header_value = []
+            for addr in value:
+                # For each address in the recipients headers
+                # Do the Header Object
+                # PY3 works fine with Header(values, charset='utf-8')
+                # PY2:
+                # - Does not escape correctly the unicode values
+                # - Must encode the display name as a HEADER
+                #    so the item is encoded properly
+                # - The encoded display name and the address are joined
+                #    into the Header of the email
+                mail_addr = address.parse(addr)
+                display_name = Header(
+                    mail_addr.display_name, charset='utf-8').encode()
+                if display_name:
+                    # decode_header method in PY2 does not look for closed items
+                    # so a ' ' separator is required between items of a Header
+                    if PY2:
+                        base_addr = '{} <{}>'
+                    else:
+                        base_addr = '{}<{}>'
+                    header_value.append(
+                        base_addr.format(
+                            display_name,
+                            mail_addr.address
+                        ).strip()
+                    )
+                else:
+                    header_value.append(mail_addr.address)
+            header_value = ','.join(header_value)
+        else:
+            header_value = Header(value, charset='utf-8').encode()
+        # Get correct header name or add the one provided if custom header key
+        header = Email.fix_header_name(header) or header
         self.email[header] = header_value
         return header_value
 
@@ -198,7 +277,7 @@ class Email(object):
         """
         return (not self.is_forwarded and (
             bool(self.header('In-Reply-To'))
-                or bool(re.match(RE_PATTERNS, self.header('Subject', '')))
+            or bool(re.match(RE_PATTERNS, self.header('Subject', '')))
         ))
 
     @property
