@@ -3,11 +3,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='qreu',
-    version='0.4.2',
+    version='0.5.0',
     packages=find_packages(),
     url='https://github.com/gisce/qreu',
     install_requires=[
-        'html2text'
+        'html2text',
+        'six'
     ],
     license='MIT',
     author='GISCE-TI, S.L.',
