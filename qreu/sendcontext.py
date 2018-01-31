@@ -56,8 +56,8 @@ class FileSender(Sender):
 
 class SMTPSender(Sender):
     def __init__(
-            self, host='localhost', port=0, user='', passwd='',
-            ssl_keyfile='', ssl_certfile='', tls=False
+            self, host='localhost', port=0, user=None, passwd=None,
+            ssl_keyfile=None, ssl_certfile=None, tls=False
     ):
         super(SMTPSender, self).__init__(
             _host=host,
