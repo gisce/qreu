@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from qreu import local
+from qreu.address import Address
 from smtplib import SMTP
 
 _SENDCONTEXT = local.LocalStack()
@@ -88,5 +89,8 @@ class SMTPSender(Sender):
         :param mail:    qreu.Email object to send
         :type mail:     Email
         """
-        self._connection.sendmail(mail.from_, mail.recipients, mail.mime_string)
+        from_mail = mail.from_
+        if isinstance(mail.from_, Address):
+            from_mail = from_mail.address
+        self._connection.sendmail(from_mail, mail.recipients, mail.mime_string)
         return True
