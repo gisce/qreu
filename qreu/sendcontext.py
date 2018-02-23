@@ -89,8 +89,5 @@ class SMTPSender(Sender):
         :param mail:    qreu.Email object to send
         :type mail:     Email
         """
-        from_mail = mail.from_
-        if isinstance(mail.from_, Address):
-            from_mail = from_mail.address
-        self._connection.sendmail(from_mail, mail.recipients, mail.mime_string)
+        self._connection.sendmail(mail.from_.address, mail.recipients, mail.mime_string)
         return True
