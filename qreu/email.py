@@ -252,24 +252,25 @@ class Email(object):
             raise ValueError('Name of the attachment not provided')
         from os.path import basename
         import base64
-        attachment = MIMEApplication('octet-stream')
 
-        attachment.add_header(
-            'Content-Disposition',
-            'attachment; filename="%s"' % basename(filename)
-        )
         if input_buff:
             attachment_str = base64.encodestring(
                 input_buff.read().encode('utf-8'))
         elif input_b64:
             attachment_str = input_b64
+        else:
+            raise ValueError('No attachment provided!')
 
-        attachment.set_charset('utf-8')
-        attachment.add_header('Content-Transfer-Encoding', 'base64')
-        attachment.set_payload(
-            attachment_str,
-            charset=attachment.get_charset()
+        attachment = MIMEApplication(
+            _data=attachment_str,
+            _subtype='octet-stream',
         )
+        attachment.set_charset('utf-8')
+        attachment.add_header(
+            'Content-Disposition',
+            'attachment; filename="%s"' % basename(filename)
+        )
+        attachment.add_header('Content-Transfer-Encoding', 'base64')
         self.email.attach(attachment)
         return True
 
