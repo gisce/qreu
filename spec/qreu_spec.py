@@ -107,6 +107,12 @@ with description("Creating an Email"):
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
 
+        with it('must add date to Header on create'):
+            from datetime import datetime
+            d = datetime.now().strftime('%a, %d %%b %Y %H:%M:%S -%z')
+            e = Email(date=d)
+            expect(e.header('Date')).to(equal(d))
+
         with it('must add any header to Email'):
             e = Email()
             header_key = 'X-ORIG-HEADER'

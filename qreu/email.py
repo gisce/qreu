@@ -6,6 +6,7 @@ from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from datetime import datetime
 
 from html2text import html2text
 from six import PY2
@@ -64,6 +65,13 @@ class Email(object):
             if not value:
                 continue
             self.add_header(header_name, value)
+        # Add date with "Thu, 01 Mar 2018 12:30:03 -0000" format
+        now = datetime.now()
+        if now.tzname():
+            now = now.strftime('%a, %d %%b %Y %H:%M:%S -%z (%Z)')
+        else:
+            now = now.strftime('%a, %d %%b %Y %H:%M:%S -%z')
+        self.add_header('Date', kwargs.get('date', now))
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
