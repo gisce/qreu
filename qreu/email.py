@@ -261,16 +261,17 @@ class Email(object):
         else:
             raise ValueError('No attachment provided!')
 
-        attachment = MIMEApplication(
-            _data=attachment_str,
-            _subtype='octet-stream',
-        )
+        attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
         attachment.add_header(
             'Content-Disposition',
             'attachment; filename="%s"' % basename(filename)
         )
         attachment.add_header('Content-Transfer-Encoding', 'base64')
+        attachment.set_payload(
+            attachment_str,
+            charset=attachment.get_charset()
+        )
         self.email.attach(attachment)
         return True
 
