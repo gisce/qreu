@@ -66,16 +66,27 @@ class Email(object):
                 continue
             self.add_header(header_name, value)
         # Add date with "Thu, 01 Mar 2018 12:30:03 -0000" format
-        now = datetime.now()
-        if now.tzname():
-            now = now.strftime('%a, %d %%b %Y %H:%M:%S -%z (%Z)')
-        else:
-            now = now.strftime('%a, %d %%b %Y %H:%M:%S -%z')
-        self.add_header('Date', kwargs.get('date', now))
+        self.add_header(
+            'Date', self.format_date(kwargs.get('date', datetime.now()))
+        )
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
             self.add_body_text(body_text, body_html)
+
+    @staticmethod
+    def format_date(date_time):
+        """
+        Parses a datetime object to a string with the standard Datetime prompt
+        If no datetime provided, returns the parameter
+        """
+        if not isinstance(date_time, datetime):
+            return date_time
+        elif date_time.tzname():
+            return date_time.strftime('%a, %d %%b %Y %H:%M:%S %z (%Z)')
+        else:
+            return date_time.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+        
 
     @staticmethod
     def parse(raw_message):
