@@ -275,10 +275,8 @@ class Email(object):
         if input_buff:
             attachment_str = base64.encodestring(
                 input_buff.read().encode('utf-8'))
-        elif input_b64:
-            attachment_str = input_b64
         else:
-            raise ValueError('No attachment provided!')
+            attachment_str = input_b64
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
