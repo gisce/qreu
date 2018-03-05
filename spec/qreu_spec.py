@@ -133,7 +133,7 @@ with description("Creating an Email"):
             class timezone(tzinfo):
 
                 def tzname(self, dt):
-                    return 'Custom'
+                    return str('Custom')
 
                 def utcoffset(self, dt):
                     diff = (
