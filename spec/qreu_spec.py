@@ -3,6 +3,8 @@ from __future__ import absolute_import, unicode_literals
 from qreu import Email
 from qreu.address import AddressList, Address
 from qreu.sendcontext import Sender
+from datetime import datetime, tzinfo, timedelta
+from mock import patch
 import qreu.address
 
 from email.mime.multipart import MIMEMultipart
@@ -106,6 +108,49 @@ with description("Creating an Email"):
             expect(e.to).to(be_empty)
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
+
+        with it('must add date to Header on create'):
+            d = datetime.now()
+            e = Email()
+            expect(e.header('Date')).to(equal(
+                d.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+            ))
+
+        with it('must add date to Header on create providing a String'):
+            d = datetime.now().strftime('%a, %d %%b %Y %H:%M:%S -0000')
+            e = Email(date=d)
+            expect(e.header('Date')).to(equal(d))
+
+        with it('must add date to Header on create providing a Datetime'):
+            d = datetime.now()
+            e = Email(date=d)
+            expect(e.header('Date')).to(equal(
+                d.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+            ))
+
+        with it('must add date to Header on create providing a'
+                ' TZ Aware Datetime'):
+            class timezone(tzinfo):
+
+                def tzname(self, dt):
+                    return str('Custom')
+
+                def utcoffset(self, dt):
+                    diff = (
+                        timedelta(hours=dt.hour, minutes=dt.minute) + 
+                        timedelta(hours=1, minutes=23)
+                    )
+                    return diff
+
+                def dst(self, dt):
+                    return self.utcoffset(dt)
+
+            info = timezone()
+            d = datetime.now(tz=info)
+            e = Email(date=d)
+            expect(e.header('Date')).to(equal(
+                d.strftime('%a, %d %%b %Y %H:%M:%S %z (%Z)')
+            ))
 
         with it('must add any header to Email'):
             e = Email()

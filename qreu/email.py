@@ -6,6 +6,7 @@ from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from datetime import datetime
 
 from html2text import html2text
 from six import PY2
@@ -64,10 +65,28 @@ class Email(object):
             if not value:
                 continue
             self.add_header(header_name, value)
+        # Add date with "Thu, 01 Mar 2018 12:30:03 -0000" format
+        self.add_header(
+            'Date', self.format_date(kwargs.get('date', datetime.now()))
+        )
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
             self.add_body_text(body_text, body_html)
+
+    @staticmethod
+    def format_date(date_time):
+        """
+        Parses a datetime object to a string with the standard Datetime prompt
+        If no datetime provided, returns the parameter
+        """
+        if not isinstance(date_time, datetime):
+            return date_time
+        elif date_time.tzname():
+            return date_time.strftime('%a, %d %%b %Y %H:%M:%S %z (%Z)')
+        else:
+            return date_time.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+        
 
     @staticmethod
     def parse(raw_message):
@@ -256,10 +275,8 @@ class Email(object):
         if input_buff:
             attachment_str = base64.encodestring(
                 input_buff.read().encode('utf-8'))
-        elif input_b64:
-            attachment_str = input_b64
         else:
-            raise ValueError('No attachment provided!')
+            attachment_str = input_b64
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
