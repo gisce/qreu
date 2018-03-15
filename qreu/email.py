@@ -66,9 +66,7 @@ class Email(object):
                 continue
             self.add_header(header_name, value)
         # Add date with "Thu, 01 Mar 2018 12:30:03 -0000" format
-        self.add_header(
-            'Date', self.format_date(kwargs.get('date', datetime.now()))
-        )
+        self.email['Date'] = self.format_date(kwargs.get('date', datetime.now()))
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
@@ -83,9 +81,9 @@ class Email(object):
         if not isinstance(date_time, datetime):
             return date_time
         elif date_time.tzname():
-            return date_time.strftime('%a, %d %%b %Y %H:%M:%S %z (%Z)')
+            return date_time.strftime('%a, %d %b %Y %H:%M:%S %z (%Z)')
         else:
-            return date_time.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+            return date_time.strftime('%a, %d %b %Y %H:%M:%S -0000')
         
 
     @staticmethod
