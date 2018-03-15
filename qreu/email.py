@@ -83,9 +83,9 @@ class Email(object):
         if not isinstance(date_time, datetime):
             return date_time
         elif date_time.tzname():
-            return date_time.strftime('%a, %d %%b %Y %H:%M:%S %z (%Z)')
+            return date_time.strftime('%a, %d %b %Y %H:%M:%S %z (%Z)')
         else:
-            return date_time.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+            return date_time.strftime('%a, %d %b %Y %H:%M:%S -0000')
         
 
     @staticmethod
