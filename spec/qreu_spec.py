@@ -113,11 +113,11 @@ with description("Creating an Email"):
             d = datetime.now()
             e = Email()
             expect(e.header('Date')).to(equal(
-                d.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+                d.strftime('%a, %d %b %Y %H:%M:%S -0000')
             ))
 
         with it('must add date to Header on create providing a String'):
-            d = datetime.now().strftime('%a, %d %%b %Y %H:%M:%S -0000')
+            d = datetime.now().strftime('%a, %d %b %Y %H:%M:%S -0000')
             e = Email(date=d)
             expect(e.header('Date')).to(equal(d))
 
@@ -125,7 +125,7 @@ with description("Creating an Email"):
             d = datetime.now()
             e = Email(date=d)
             expect(e.header('Date')).to(equal(
-                d.strftime('%a, %d %%b %Y %H:%M:%S -0000')
+                d.strftime('%a, %d %b %Y %H:%M:%S -0000')
             ))
 
         with it('must add date to Header on create providing a'
@@ -149,7 +149,7 @@ with description("Creating an Email"):
             d = datetime.now(tz=info)
             e = Email(date=d)
             expect(e.header('Date')).to(equal(
-                d.strftime('%a, %d %%b %Y %H:%M:%S %z (%Z)')
+                d.strftime('%a, %d %b %Y %H:%M:%S %z (%Z)')
             ))
 
         with it('must add any header to Email'):
