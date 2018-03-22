@@ -397,3 +397,9 @@ with description("Creating an Email"):
             e = Email(**self.vals)
             with Sender():
                 expect(e.send()).to(equal(e.mime_string))
+        
+        with it('must not re-add "Date" on email when adding header'):
+            e = Email(**self.vals)
+            expect(e.header('Date')).to_not(be_false)
+            expect(e.add_header('Date', e.header('Date'))).to(be_false)
+            expect(len(e.mime_string.split('Date'))).to(equal(2))
