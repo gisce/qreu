@@ -381,7 +381,10 @@ class Email(object):
         """
         :return: `address.AddressList`
         """
-        return address.parse_list(self.header('Bcc', ''))
+        return address.parse_list(
+            self.header('Bcc', '') or
+            ','.join(self.bccs)
+        )    
 
     @property
     def recipients(self):

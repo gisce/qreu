@@ -174,7 +174,7 @@ with description("Creating an Email"):
                 'email2@example.com'
             ]
             expect(e.add_header('bcc', bccs)).to(equal(bccs))
-            expect(e.bcc).to(be_empty)
+            expect(e.header('bcc', [])).to(be_empty)
             expect(e.bccs).to(equal(bccs))
 
         with it('must raise exception wrongly adding a header'):
@@ -344,7 +344,7 @@ with description("Creating an Email"):
             }
         with it("must not add BCC header, but ADD 'bccs' attribute"):
             e = Email(**{'bcc': self.vals['bcc']})
-            expect(e.bcc).to(be_empty)
+            expect(e.header('bcc', [])).to(be_empty)
             expect(e.bccs).to(equal(self.vals['bcc']))
         
         with it("must have all headers and text(basic MIMEMultipart)"):
@@ -355,7 +355,8 @@ with description("Creating an Email"):
             expect(e.cc).to(equal([','.join(self.vals['cc'])]))
             recipients = list({
                 ','.join(self.vals['to']),
-                ','.join(self.vals['cc'])
+                ','.join(self.vals['cc']),
+                ','.join(self.vals['bcc'])
             })
             failed_vals = []
             for elem in recipients:
