@@ -60,7 +60,8 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
-        for header_name in ['subject', 'from', 'to', 'cc', 'bcc']:
+        self.bccs = []
+        for header_name in ['subject', 'from', 'to', 'cc']:
             value = kwargs.get(header_name, False)
             if not value:
                 continue
@@ -212,6 +213,9 @@ class Email(object):
                     )
                 else:
                     header_value.append(mail_addr.address)
+            if header.lower() == 'bcc':
+                self.bccs = header_value
+                return header_value
             header_value = ','.join(header_value)
         else:
             header_value = Header(value, charset='utf-8').encode()

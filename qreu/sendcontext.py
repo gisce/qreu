@@ -92,5 +92,7 @@ class SMTPSender(Sender):
         from_mail = mail.from_
         if isinstance(mail.from_, Address):
             from_mail = from_mail.address
-        self._connection.sendmail(from_mail, mail.recipients, mail.mime_string)
+        self._connection.sendmail(
+            from_mail, mail.recipients + [','.join(mail.bccs)],
+            mail.mime_string)
         return True
