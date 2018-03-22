@@ -173,9 +173,9 @@ with description("Creating an Email"):
                 'secret@example.com',
                 'email2@example.com'
             ]
-            expect(e.add_header('bcc', bccs)).to(equal(bccs))
+            expect(e.add_header('bcc', bccs)).to(equal(','.join(bccs)))
             expect(e.header('bcc', [])).to(be_empty)
-            expect(e.bccs).to(equal(bccs))
+            expect(e.bccs).to(equal(','.join(bccs)))
 
         with it('must raise exception wrongly adding a header'):
             def call_wrongly():
@@ -343,9 +343,11 @@ with description("Creating an Email"):
                 )
             }
         with it("must not add BCC header, but ADD 'bccs' attribute"):
+            bccs = self.vals['bcc']
             e = Email(**{'bcc': self.vals['bcc']})
             expect(e.header('bcc', [])).to(be_empty)
-            expect(e.bccs).to(equal(self.vals['bcc']))
+            expect(e.bccs).to(equal(','.join(bccs)))
+            expect(e.bcc).to(equal([','.join(bccs)]))
         
         with it("must have all headers and text(basic MIMEMultipart)"):
             e = Email(**self.vals)
