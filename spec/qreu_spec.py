@@ -379,6 +379,8 @@ with description("Creating an Email"):
             expect(e.to).to(equal([parsed]))
             e = Email(cc=address)
             expect(e.cc).to(equal([parsed]))
+            e = Email(bcc=[address])
+            expect(e.bcc).to(equal([parsed]))
 
         with it('must parse html2text if no text provided'):
             vals = self.vals.copy()
