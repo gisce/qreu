@@ -61,7 +61,7 @@ class Email(object):
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
         self.bccs = []
-        for header_name in ['subject', 'from', 'to', 'cc']:
+        for header_name in ['subject', 'from', 'to', 'cc', 'bcc']:
             value = kwargs.get(header_name, False)
             if not value:
                 continue
