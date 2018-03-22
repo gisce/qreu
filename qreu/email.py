@@ -60,6 +60,7 @@ class Email(object):
     """
     def __init__(self, **kwargs):
         self.email = MIMEMultipart()
+        self.bccs = []
         for header_name in ['subject', 'from', 'to', 'cc', 'bcc']:
             value = kwargs.get(header_name, False)
             if not value:
@@ -177,6 +178,8 @@ class Email(object):
         """
         if not (header and value):
             raise ValueError('Header not provided!')
+        if header.lower() == 'date':
+            return False
         recipients_headers = ['to', 'cc', 'bcc']
         if header.lower() in recipients_headers or header.lower() == 'from':
             if not isinstance(value, list):
@@ -215,7 +218,19 @@ class Email(object):
             header_value = Header(value, charset='utf-8').encode()
         # Get correct header name or add the one provided if custom header key
         header = Email.fix_header_name(header) or header
-        self.email[header] = header_value
+        if header.lower() == 'bcc':
+            result = []
+            for part in decode_header(header_value):
+                if part[1]:
+                    result.append(part[0].decode(part[1]))
+                elif isinstance(part[0], bytes):
+                    result.append(part[0].decode('utf-8'))
+                else:
+                    result.append(part[0])
+            header_value = ''.join(result)
+            self.bccs = header_value
+        else:
+            self.email[header] = header_value
         return header_value
 
     def add_body_text(self, body_plain=False, body_html=False):
@@ -375,7 +390,9 @@ class Email(object):
         """
         :return: `address.AddressList`
         """
-        return address.parse_list(self.header('Bcc', ''))
+        return address.parse_list(
+            self.header('Bcc', '') or self.bccs
+        )    
 
     @property
     def recipients(self):

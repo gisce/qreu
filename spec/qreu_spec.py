@@ -108,6 +108,8 @@ with description("Creating an Email"):
             expect(e.to).to(be_empty)
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
+            expect(e.bcc).to(be_empty)
+            expect(e.bccs).to(be_empty)
 
         with it('must add date to Header on create'):
             d = datetime.now()
@@ -164,6 +166,16 @@ with description("Creating an Email"):
             # Recipient Header using a list
             e.add_header('cc', ['someone@example.com', 'theboss@example.com'])
             expect(e.header(header_key, False)).to(equal(header_value))
+
+        with it("must NOT add BCC Header, but ADD 'bccs' attribute"):
+            e = Email()
+            bccs = [
+                'secret@example.com',
+                'email2@example.com'
+            ]
+            expect(e.add_header('bcc', bccs)).to(equal(','.join(bccs)))
+            expect(e.header('bcc', [])).to(be_empty)
+            expect(e.bccs).to(equal(','.join(bccs)))
 
         with it('must raise exception wrongly adding a header'):
             def call_wrongly():
@@ -330,13 +342,19 @@ with description("Creating an Email"):
                     "And <u>underline</u></div>"
                 )
             }
+        with it("must not add BCC header, but ADD 'bccs' attribute"):
+            bccs = self.vals['bcc']
+            e = Email(**{'bcc': self.vals['bcc']})
+            expect(e.header('bcc', [])).to(be_empty)
+            expect(e.bccs).to(equal(','.join(bccs)))
+            expect(e.bcc).to(equal([','.join(bccs)]))
+        
         with it("must have all headers and text(basic MIMEMultipart)"):
             e = Email(**self.vals)
             expect(e.subject).to(equal(self.vals['subject']))
             expect(e.to).to(equal(self.vals['to']))
             expect(e.from_).to(equal(qreu.address.parse(self.vals['from'])))
             expect(e.cc).to(equal([','.join(self.vals['cc'])]))
-            expect(e.bcc).to(equal([','.join(self.vals['bcc'])]))
             recipients = list({
                 ','.join(self.vals['to']),
                 ','.join(self.vals['cc']),
@@ -384,3 +402,9 @@ with description("Creating an Email"):
             e = Email(**self.vals)
             with Sender():
                 expect(e.send()).to(equal(e.mime_string))
+        
+        with it('must not re-add "Date" on email when adding header'):
+            e = Email(**self.vals)
+            expect(e.header('Date')).to_not(be_false)
+            expect(e.add_header('Date', e.header('Date'))).to(be_false)
+            expect(len(e.mime_string.split('Date'))).to(equal(2))
