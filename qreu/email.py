@@ -213,15 +213,24 @@ class Email(object):
                     )
                 else:
                     header_value.append(mail_addr.address)
-            if header.lower() == 'bcc':
-                self.bccs = header_value
-                return header_value
             header_value = ','.join(header_value)
         else:
             header_value = Header(value, charset='utf-8').encode()
         # Get correct header name or add the one provided if custom header key
         header = Email.fix_header_name(header) or header
-        self.email[header] = header_value
+        if header.lower() == 'bcc':
+            result = []
+            for part in decode_header(header_value):
+                if part[1]:
+                    result.append(part[0].decode(part[1]))
+                elif isinstance(part[0], bytes):
+                    result.append(part[0].decode('utf-8'))
+                else:
+                    result.append(part[0])
+            header_value = ''.join(result)
+            self.bccs = header_value
+        else:
+            self.email[header] = header_value
         return header_value
 
     def add_body_text(self, body_plain=False, body_html=False):
@@ -382,8 +391,7 @@ class Email(object):
         :return: `address.AddressList`
         """
         return address.parse_list(
-            self.header('Bcc', '') or
-            ','.join(self.bccs)
+            self.header('Bcc', '') or self.bccs
         )    
 
     @property
