@@ -108,6 +108,8 @@ with description("Creating an Email"):
             expect(e.to).to(be_empty)
             expect(e.cc).to(be_empty)
             expect(e.recipients).to(be_empty)
+            expect(e.bcc).to(be_empty)
+            expect(e.bccs).to(be_empty)
 
         with it('must add date to Header on create'):
             d = datetime.now()
@@ -164,6 +166,16 @@ with description("Creating an Email"):
             # Recipient Header using a list
             e.add_header('cc', ['someone@example.com', 'theboss@example.com'])
             expect(e.header(header_key, False)).to(equal(header_value))
+
+        with it("must NOT add BCC Header, but ADD 'bccs' attribute"):
+            e = Email()
+            bccs = [
+                'secret@example.com',
+                'email2@example.com'
+            ]
+            expect(e.add_header('bcc', bccs)).to(equal(bccs))
+            expect(e.bcc).to(be_empty)
+            expect(e.bccs).to(equal(bccs))
 
         with it('must raise exception wrongly adding a header'):
             def call_wrongly():
@@ -330,17 +342,20 @@ with description("Creating an Email"):
                     "And <u>underline</u></div>"
                 )
             }
+        with it("must not add BCC header, but ADD 'bccs' attribute"):
+            e = Email(**{'bcc': self.vals['bcc']})
+            expect(e.bcc).to(be_empty)
+            expect(e.bccs).to(equal(self.vals['bcc']))
+        
         with it("must have all headers and text(basic MIMEMultipart)"):
             e = Email(**self.vals)
             expect(e.subject).to(equal(self.vals['subject']))
             expect(e.to).to(equal(self.vals['to']))
             expect(e.from_).to(equal(qreu.address.parse(self.vals['from'])))
             expect(e.cc).to(equal([','.join(self.vals['cc'])]))
-            expect(e.bcc).to(equal([','.join(self.vals['bcc'])]))
             recipients = list({
                 ','.join(self.vals['to']),
-                ','.join(self.vals['cc']),
-                ','.join(self.vals['bcc'])
+                ','.join(self.vals['cc'])
             })
             failed_vals = []
             for elem in recipients:
@@ -363,8 +378,6 @@ with description("Creating an Email"):
             expect(e.to).to(equal([parsed]))
             e = Email(cc=address)
             expect(e.cc).to(equal([parsed]))
-            e = Email(bcc=[address])
-            expect(e.bcc).to(equal([parsed]))
 
         with it('must parse html2text if no text provided'):
             vals = self.vals.copy()
