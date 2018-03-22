@@ -177,6 +177,8 @@ class Email(object):
         """
         if not (header and value):
             raise ValueError('Header not provided!')
+        if header.lower() == 'Date':
+            return False
         recipients_headers = ['to', 'cc', 'bcc']
         if header.lower() in recipients_headers or header.lower() == 'from':
             if not isinstance(value, list):
