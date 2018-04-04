@@ -2,7 +2,7 @@
 
 from qreu import local
 from qreu.address import Address
-from smtplib import SMTP
+from smtplib import SMTP, SMTP_SSL
 
 _SENDCONTEXT = local.LocalStack()
 
@@ -71,10 +71,18 @@ class SMTPSender(Sender):
         )
 
     def __enter__(self):
-        self._connection = SMTP(host=self._host, port=self._port)
-        if self._tls:
-            self._connection.starttls(
-                keyfile=self._ssl_keyfile, certfile=self._ssl_certfile)
+        try:
+            self._connection = SMTP(host=self._host, port=self._port)
+            if self._tls:
+                self._connection.starttls(
+                    keyfile=self._ssl_keyfile, certfile=self._ssl_certfile)
+        except Exception as err:
+            if self._tls:
+                self._connection = SMTP_SSL(host=self._host, port=self._port,
+                                            keyfile=self._ssl_keyfile,
+                                            certfile=self._ssl_certfile)
+            else:
+                raise err
         if self._user and self._passwd:
             self._connection.login(user=self._user, password=self._passwd)
         return super(SMTPSender, self).__enter__()
