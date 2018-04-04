@@ -61,12 +61,12 @@ class SMTPSender(Sender):
             ssl_keyfile=None, ssl_certfile=None, tls=False
     ):
         super(SMTPSender, self).__init__(
-            _host=host,
-            _port=port,
-            _user=user,
-            _passwd=passwd,
-            _ssl_keyfile=ssl_keyfile,
-            _ssl_certfile=ssl_certfile,
+            _host=str(host),
+            _port=int(port),
+            _user=str(user),
+            _passwd=str(passwd),
+            _ssl_keyfile=str(ssl_keyfile),
+            _ssl_certfile=str(ssl_certfile),
             _tls=tls or (ssl_certfile and ssl_keyfile)
         )
 
@@ -89,8 +89,5 @@ class SMTPSender(Sender):
         :param mail:    qreu.Email object to send
         :type mail:     Email
         """
-        from_mail = mail.from_
-        if isinstance(mail.from_, Address):
-            from_mail = from_mail.address
-        self._connection.sendmail(from_mail, mail.recipients, mail.mime_string)
+        self._connection.sendmail(mail.from_.address, mail.recipients, mail.mime_string)
         return True
