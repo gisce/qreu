@@ -83,7 +83,16 @@ class Email(object):
         if not isinstance(date_time, datetime):
             return date_time
         else:
-            return formatdate(date_time.timestamp())        
+            if PY2:
+                if date_time.tzname():
+                    utc_naive = (
+                        date_time.replace(tzinfo=None) - date_time.utcoffset())
+                    t = (utc_naive - datetime(1970, 1, 1)).total_seconds()
+                else:
+                    t = (date_time - datetime(1970, 1, 1)).total_seconds()
+                return formatdate(t)
+            else:
+                return formatdate(date_time.timestamp())        
 
     @staticmethod
     def parse(raw_message):
