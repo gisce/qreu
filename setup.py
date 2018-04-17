@@ -9,7 +9,6 @@ setup(
     install_requires=[
         'html2text',
         'six',
-        'babel',
     ],
     license='MIT',
     author='GISCE-TI, S.L.',

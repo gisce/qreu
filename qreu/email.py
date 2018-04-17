@@ -6,11 +6,11 @@ from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formatdate
 from datetime import datetime
 
 from html2text import html2text
 from six import PY2
-from babel.dates import format_datetime
 
 import re
 
@@ -82,17 +82,8 @@ class Email(object):
         """
         if not isinstance(date_time, datetime):
             return date_time
-        elif date_time.tzname():
-            return format_datetime(
-                datetime=date_time,
-                format='EEE, dd MMM yyyy HH:mm:ss Z',
-                locale='en') + ' ({})'.format(date_time.tzname())
         else:
-            return format_datetime(
-                datetime=date_time,
-                format='EEE, dd MMM yyyy HH:mm:ss -0000', 
-                locale='en')
-        
+            return formatdate(date_time.timestamp())        
 
     @staticmethod
     def parse(raw_message):
