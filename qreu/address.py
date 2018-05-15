@@ -21,7 +21,7 @@ def parse_list(header):
     """Parse a emails string using getaddresses.
     """
     if not header:
-        return []
+        header = []
     return AddressList([header])
 
 
