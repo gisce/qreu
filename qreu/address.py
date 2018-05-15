@@ -13,12 +13,14 @@ Address = namedtuple('Address', ['display_name', 'address'])
 
 def parse(header):
     """Parse email string using `parseaddr`
+    :return: `Address` from parsing the address on `header`
     """
     return Address(*parseaddr(header))
 
 
 def parse_list(header):
     """Parse a emails string using getaddresses.
+    :return: `AddressList` from `header`
     """
     if not header:
         return AddressList([])
