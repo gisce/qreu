@@ -376,14 +376,14 @@ class Email(object):
 
         :return: `address.AddressList`
         """
-        return address.parse_list(self.header('To', ''))
+        return address.parse_list(self.header('To', '')).addresses
 
     @property
     def cc(self):
         """
         :return: `address.AddressList`
         """
-        return address.parse_list(self.header('Cc', ''))
+        return address.parse_list(self.header('Cc', '')).addresses
 
     @property
     def bcc(self):
@@ -392,7 +392,7 @@ class Email(object):
         """
         return address.parse_list(
             self.header('Bcc', '') or self.bccs
-        )    
+        ).addresses
 
     @property
     def recipients(self):
