@@ -390,13 +390,21 @@ class Email(object):
         """
         :return: `address.AddressList`
         """
-        return address.parse_list(
-            self.header('Bcc', '') or self.bccs
-        )    
+        return address.parse_list(self.header('Bcc', '') or self.bccs)
 
     @property
     def recipients(self):
+        """
+        :return: `address.AddressList` with all recipients
+        """
         return self.to + self.cc + self.bcc
+
+    @property
+    def recipients_addresses(self):
+        """
+        :return: `list` with all email addresses of the recipients in a list
+        """
+        return list(set(self.recipients.addresses))
 
     @property
     def body_parts(self):
