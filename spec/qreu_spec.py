@@ -7,12 +7,14 @@ from datetime import datetime, tzinfo, timedelta
 from mock import patch
 import qreu.address
 
+from email.utils import formatdate
 from email.mime.multipart import MIMEMultipart
 from html2text import html2text
 
 from mamba import *
 from expects import *
 
+from six import PY2
 
 with description('Parsing an Email'):
     with before.all:
@@ -115,20 +117,34 @@ with description("Creating an Email"):
         with it('must add date to Header on create'):
             d = datetime.now()
             e = Email()
+            if PY2:
+                t = (d - datetime(1970, 1, 1)).total_seconds()
+            else:
+                t = d.timestamp()
+            # IF Py3 use "d.timestamp()"
             expect(e.header('Date')).to(equal(
-                d.strftime('%a, %d %b %Y %H:%M:%S -0000')
+                formatdate(t) 
             ))
 
         with it('must add date to Header on create providing a String'):
-            d = datetime.now().strftime('%a, %d %b %Y %H:%M:%S -0000')
-            e = Email(date=d)
-            expect(e.header('Date')).to(equal(d))
+            d = datetime.now()
+            if PY2:
+                t = (d - datetime(1970, 1, 1)).total_seconds()
+            else:
+                t = d.timestamp()
+            s = formatdate(t)
+            e = Email(date=s)
+            expect(e.header('Date')).to(equal(s))
 
         with it('must add date to Header on create providing a Datetime'):
             d = datetime.now()
+            if PY2:
+                t = (d - datetime(1970, 1, 1)).total_seconds()
+            else:
+                t = d.timestamp()
             e = Email(date=d)
             expect(e.header('Date')).to(equal(
-                d.strftime('%a, %d %b %Y %H:%M:%S -0000')
+                formatdate(t)
             ))
 
         with it('must add date to Header on create providing a'
@@ -150,9 +166,14 @@ with description("Creating an Email"):
 
             info = timezone()
             d = datetime.now(tz=info)
+            if PY2:
+                utc_naive = (d.replace(tzinfo=None) - d.utcoffset())
+                t = (utc_naive - datetime(1970, 1, 1)).total_seconds()
+            else:
+                t = d.timestamp()
             e = Email(date=d)
             expect(e.header('Date')).to(equal(
-                d.strftime('%a, %d %b %Y %H:%M:%S %z (%Z)')
+                formatdate(t)
             ))
 
         with it('must add any header to Email'):

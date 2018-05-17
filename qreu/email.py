@@ -6,6 +6,7 @@ from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formatdate
 from datetime import datetime
 
 from html2text import html2text
@@ -67,25 +68,31 @@ class Email(object):
                 continue
             self.add_header(header_name, value)
         # Add date with "Thu, 01 Mar 2018 12:30:03 -0000" format
-        self.email['Date'] = self.format_date(kwargs.get('date', datetime.now()))
+        self.email['Date'] = self._format_date(kwargs.get('date', datetime.now()))
         body_text = kwargs.get('body_text', False)
         body_html = kwargs.get('body_html', False)
         if body_text or body_html:
             self.add_body_text(body_text, body_html)
 
     @staticmethod
-    def format_date(date_time):
+    def _format_date(date_time):
         """
         Parses a datetime object to a string with the standard Datetime prompt
         If no datetime provided, returns the parameter
         """
         if not isinstance(date_time, datetime):
             return date_time
-        elif date_time.tzname():
-            return date_time.strftime('%a, %d %b %Y %H:%M:%S %z (%Z)')
         else:
-            return date_time.strftime('%a, %d %b %Y %H:%M:%S -0000')
-        
+            if PY2:
+                if date_time.tzname():
+                    utc_naive = (
+                        date_time.replace(tzinfo=None) - date_time.utcoffset())
+                    t = (utc_naive - datetime(1970, 1, 1)).total_seconds()
+                else:
+                    t = (date_time - datetime(1970, 1, 1)).total_seconds()
+                return formatdate(t)
+            else:
+                return formatdate(date_time.timestamp())        
 
     @staticmethod
     def parse(raw_message):
