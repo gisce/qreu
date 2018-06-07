@@ -425,16 +425,19 @@ class Email(object):
             if maintype == 'multipart':
                 continue
             # Get Text and HTML
-            if maintype == 'text':
+            elif maintype == 'text':
                 if subtype in ['plain', 'html']:
+                    encoder = part.get_content_charset() or 'utf-8'
                     return_vals.update(
-                        {subtype:part.get_payload(decode=True).decode('utf-8')})
+                        {subtype:part.get_payload(decode=True).decode(encoder)})
             # Get Attachments
-            if maintype == 'application':
+            else:
                 files = return_vals.get('files', [])
                 new_attach = part.get('Content-Disposition', False)
-                if 'attachment' in new_attach:
-                    filename = new_attach.split('filename=')[-1][1:-1]
+                if 'filename' in new_attach:
+                    filename = [
+                         f for f in new_attach.split(';') if 'filename=' in f
+                    ][0].split('filename=')[-1][1:-1]
                     if filename:
                         files.append(filename)
                 return_vals['files'] = files
@@ -449,12 +452,18 @@ class Email(object):
         :return: Returns a Tuple generator as (AttachName, AttachContent)
         """
         for part in self.email.walk():
-            if part.get_content_maintype() == 'application':
+            if not part.get_content_maintype() in ['multipart', 'text']:
                 new_attach = part.get('Content-Disposition', False)
-                if 'attachment' in new_attach:
-                    filename = new_attach.split('filename=')[-1][1:-1]
-                    if filename:
-                        yield filename, part.get_payload()
+                if 'filename' in new_attach:
+                    if 'filename' in new_attach:
+                        filename = [
+                            f for f in new_attach.split(';') if 'filename=' in f
+                        ][0].split('filename=')[-1][1:-1]
+                        yield {
+                            'type': part.get_content_type(),
+                            'name': filename,
+                            'content': part.get_payload()
+                        }
 
     @property
     def mime_string(self):
