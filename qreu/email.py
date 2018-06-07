@@ -427,8 +427,9 @@ class Email(object):
             # Get Text and HTML
             elif maintype == 'text':
                 if subtype in ['plain', 'html']:
+                    encoder = part.get_content_charset() or 'utf-8'
                     return_vals.update(
-                        {subtype:part.get_payload(decode=True).decode('utf-8')})
+                        {subtype:part.get_payload(decode=True).decode(encoder)})
             # Get Attachments
             else:
                 files = return_vals.get('files', [])
