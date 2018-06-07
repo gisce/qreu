@@ -270,9 +270,11 @@ with description("Creating an Email"):
             expect(e.body_parts['files']).to(equal([f_name]))
             with open(f_path) as f:
                 expect(e.add_attachment(input_buff=f)).to(be_true)
-            files = [filename for filename, filecontent in e.attachments]
+            files = [attachment['name'] for attachment in e.attachments]
             expect(files).to(equal([f_name, f_name]))
-            for filename, filecontent in e.attachments:
+            for attachment in e.attachments:
+                filename = attachment['name']
+                filecontent = attachment['content']
                 with open(f_path) as f:
                     attachment_str = base64.encodestring(
                         f.read().encode('utf-8'))
@@ -303,7 +305,9 @@ with description("Creating an Email"):
                 # Python 2.7 compat
                 check_str = unicode(check_str)
             e.add_attachment(input_buff=input_iostr, attname=f_name)
-            for filename, filecontent in e.attachments:
+            for attachment in e.attachments:
+                filename = attachment['name']
+                filecontent = attachment['content']
                 expect(filecontent).to(equal(check_str))
 
         with it('must add a base64 string as attachment to body'):
@@ -321,7 +325,9 @@ with description("Creating an Email"):
                 # Python 2.7 compat
                 base64_str = unicode(base64_str)
             e.add_attachment(input_b64=base64_str, attname=f_name)
-            for filename, filecontent in e.attachments:
+            for attachment in e.attachments:
+                filename = attachment['name']
+                filecontent = attachment['content']
                 expect(filecontent).to(equal(base64_str))
 
         with it('must raise an exception adding an unexisting attachment'):
