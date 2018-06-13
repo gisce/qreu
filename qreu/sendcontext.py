@@ -2,7 +2,7 @@
 
 from qreu import local
 from qreu.address import Address
-from smtplib import SMTP, SMTP_SSL
+from smtplib import SMTP, SMTP_SSL, SMTPConnectError
 
 _SENDCONTEXT = local.LocalStack()
 
