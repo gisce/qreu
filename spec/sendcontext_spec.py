@@ -8,7 +8,7 @@ import tempfile
 
 from qreu.sendcontext import *
 from qreu import Email
-from smtplib import SMTPException, SMTPConnectError
+from smtplib import SMTPConnectError
 
 with description('Senders'):
     with before.all:
@@ -92,7 +92,8 @@ with description('Senders'):
 
         with it('must try SMTP_SSL connection after failure if TLS is enabled'):
             with patch('qreu.sendcontext.SMTP') as msmtp:
-                msmtp.side_effect = SMTPConnectError(255, 'Try SSL')
+                msmtp.side_effect = SMTPConnectError(
+                    530, "5.7.0 Must issue a STARTTLS command first.")
                 with patch('qreu.sendcontext.SMTP_SSL') as msmtp_ssl:
                     smtp_mocked = Mock()
                     smtp_mocked.login.return_value = True
@@ -122,5 +123,6 @@ with description('Senders'):
                 ) as sender:
                     expect(sender.send(self.test_mail)).to(be_true)
             with patch('qreu.sendcontext.SMTP') as msmtp:
-                msmtp.side_effect = SMTPException('Failure')
+                msmtp.side_effect = SMTPConnectError(
+                    530, "5.7.0 Must issue a STARTTLS command first.")
                 expect(call_wrongly).to(raise_error)
