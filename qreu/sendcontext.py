@@ -83,7 +83,7 @@ class SMTPSender(Sender):
                                             keyfile=self._ssl_keyfile,
                                             certfile=self._ssl_certfile)
             else:
-                raise err
+                raise
         if self._user and self._passwd:
             self._connection.login(user=self._user, password=self._passwd)
         return super(SMTPSender, self).__enter__()
