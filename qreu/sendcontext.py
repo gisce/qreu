@@ -76,7 +76,8 @@ class SMTPSender(Sender):
             if self._tls:
                 self._connection.starttls(
                     keyfile=self._ssl_keyfile, certfile=self._ssl_certfile)
-        except Exception as err:
+        except SMTPConnectError as err:
+            # Cannot establish connection due to only listening to SSL
             if self._tls:
                 self._connection = SMTP_SSL(host=self._host, port=self._port,
                                             keyfile=self._ssl_keyfile,
