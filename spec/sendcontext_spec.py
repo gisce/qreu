@@ -8,6 +8,7 @@ import tempfile
 
 from qreu.sendcontext import *
 from qreu import Email
+from smtplib import SMTPConnectError
 
 with description('Senders'):
     with before.all:
@@ -30,39 +31,6 @@ with description('Senders'):
             If you recieved this email, it means we sent it correctly.
             '''
         )
-    with it('must return the mail as a string with default Sender'):
-        with Sender() as sender:
-            expect(sender.send(self.test_mail)).to(
-                equal(self.test_mail.mime_string))
-
-    with it('must write the mail as a string to a file with FileSender'):
-        with self.temp_dir() as tmpdir:
-            filename = tempfile.mktemp(dir=tmpdir.dir)
-            with FileSender(filename) as sender:
-                sender.send(self.test_mail)
-            with open(filename, 'r') as test_file:
-                mail_text = test_file.read()
-            expect(mail_text).to(equal(self.test_mail.mime_string))
-
-    with it('must "send" via smtp the email with SMTPSender'):
-        with patch('qreu.sendcontext.SMTP') as mocked_conn:
-            # Mock the SMTP connection
-            smtp_mocked = Mock()
-            smtp_mocked.login.return_value = True
-            smtp_mocked.starttls.return_value = True
-            smtp_mocked.login.return_value = True
-            smtp_mocked.send.return_value = True
-            smtp_mocked.sendmail.return_value = True
-            smtp_mocked.close.return_value = True
-            mocked_conn.return_value = smtp_mocked
-            with SMTPSender(
-                host='host',
-                user='user',
-                passwd='passwd',
-                ssl_keyfile='ssl_keyfile',
-                ssl_certfile='ssl_certfile'
-            ) as sender:
-                sender.send(self.test_mail)
 
     with it('must send different emails on multi-layered contexts'):
         with self.temp_dir() as tmpdir:
@@ -84,3 +52,77 @@ with description('Senders'):
                 FileSender(False)
 
             expect(call_wrongly).to(raise_error(ValueError))
+
+    with context('Default (DEBUG) Sender'):
+        with it('must return the mail as a string with default Sender'):
+            with Sender() as sender:
+                expect(sender.send(self.test_mail)).to(
+                    equal(self.test_mail.mime_string))
+
+    with context('FILE Sender'):
+        with it('must write the mail as a string to a file with FileSender'):
+            with self.temp_dir() as tmpdir:
+                filename = tempfile.mktemp(dir=tmpdir.dir)
+                with FileSender(filename) as sender:
+                    sender.send(self.test_mail)
+                with open(filename, 'r') as test_file:
+                    mail_text = test_file.read()
+                expect(mail_text).to(equal(self.test_mail.mime_string))
+
+    with context('SMTP Sender'):
+        with it('must "send" via smtp the email with SMTPSender'):
+            with patch('qreu.sendcontext.SMTP') as mocked_conn:
+                # Mock the SMTP connection
+                smtp_mocked = Mock()
+                smtp_mocked.login.return_value = True
+                smtp_mocked.starttls.return_value = True
+                smtp_mocked.login.return_value = True
+                smtp_mocked.send.return_value = True
+                smtp_mocked.sendmail.return_value = True
+                smtp_mocked.close.return_value = True
+                mocked_conn.return_value = smtp_mocked
+                with SMTPSender(
+                        host='host',
+                        user='user',
+                        passwd='passwd',
+                        ssl_keyfile='ssl_keyfile',
+                        ssl_certfile='ssl_certfile'
+                ) as sender:
+                    sender.send(self.test_mail)
+
+        with it('must try SMTP_SSL connection after failure if TLS is enabled'):
+            with patch('qreu.sendcontext.SMTP') as msmtp:
+                msmtp.side_effect = SMTPConnectError(
+                    530, "5.7.0 Must issue a STARTTLS command first.")
+                with patch('qreu.sendcontext.SMTP_SSL') as msmtp_ssl:
+                    smtp_mocked = Mock()
+                    smtp_mocked.login.return_value = True
+                    smtp_mocked.starttls.return_value = True
+                    smtp_mocked.login.return_value = True
+                    smtp_mocked.send.return_value = True
+                    smtp_mocked.sendmail.return_value = True
+                    smtp_mocked.close.return_value = True
+                    msmtp_ssl.return_value = smtp_mocked
+                    with SMTPSender(
+                            host='host',
+                            user='user',
+                            passwd='passwd',
+                            ssl_keyfile='ssl_keyfile',
+                            ssl_certfile='ssl_certfile'
+                    ) as sender:
+                        expect(sender.send(self.test_mail)).to(be_true)
+
+        with it('must raise exception after Failure if no TLS is enabled'):
+            def call_wrongly():
+                with SMTPSender(
+                        host='host',
+                        user='user',
+                        passwd='passwd',
+                        ssl_keyfile=False,
+                        ssl_certfile=False
+                ) as sender:
+                    expect(sender.send(self.test_mail)).to(be_true)
+            with patch('qreu.sendcontext.SMTP') as msmtp:
+                msmtp.side_effect = SMTPConnectError(
+                    530, "5.7.0 Must issue a STARTTLS command first.")
+                expect(call_wrongly).to(raise_error)
