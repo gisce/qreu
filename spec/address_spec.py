@@ -17,6 +17,9 @@ with description('address module'):
             addr_str = 'user@example.com'
             r = parse(addr_str)
             expect(r).to(have_property('display', addr_str))
+            addr_str = '      user@example.com        '
+            r = parse(addr_str)
+            expect(r).to(have_property('display', addr_str.strip()))
 
         with it('must be able to parse from the class Adress'):
             addr_str = 'Firstname Secondname <user@example.com>'
