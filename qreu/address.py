@@ -17,6 +17,10 @@ class Address(BaseAddress):
             return '{display_name} <{address}>'.format(**self._asdict())
         return self.address
 
+    @staticmethod
+    def parse(header):
+        return parse(header)
+
 
 def parse(header):
     """Parse email string using `parseaddr`
