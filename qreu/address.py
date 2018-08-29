@@ -8,7 +8,14 @@ except ImportError:
 from email.utils import getaddresses, parseaddr
 
 
-Address = namedtuple('Address', ['display_name', 'address'])
+BaseAddress = namedtuple('Address', ['display_name', 'address'])
+
+class Address(BaseAddress):
+    @property
+    def display(self):
+        if self.display_name:
+            return '{display_name} <{address}>'.format(**self._asdict())
+        return self.address
 
 
 def parse(header):

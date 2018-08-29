@@ -10,11 +10,18 @@ with description('address module'):
             expect(r).to(have_property('address', 'user@example.com'))
             expect(r).to(have_property('display_name', 'Firstname Secondname'))
 
+        with it('must have a display propery with a formatted address'):
+            addr_str = 'Firstname Secondname <user@example.com>'
+            r = parse(addr_str)
+            expect(r).to(have_property('display', addr_str))
+            addr_str = 'user@example.com'
+            r = parse(addr_str)
+            expect(r).to(have_property('display', addr_str))
+
         with it('must parse multiple addresses'):
             r = parse_list('First <f@example.com>, Second <s@example.com>')
             expect(r).to(be_a(AddressList))
             expect(r).to(have_property('addresses', ['f@example.com', 's@example.com']))
-
 
         with it('can sum AddressList'):
             a1 = AddressList(['User <u@example.com>'])
