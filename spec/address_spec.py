@@ -1,4 +1,4 @@
-from qreu.address import parse, parse_list, AddressList
+from qreu.address import parse, parse_list, AddressList, Address
 
 from expects import *
 
@@ -10,11 +10,26 @@ with description('address module'):
             expect(r).to(have_property('address', 'user@example.com'))
             expect(r).to(have_property('display_name', 'Firstname Secondname'))
 
+        with it('must have a display with a formatted address as on creation'):
+            addr_str = 'Firstname Secondname <user@example.com>'
+            r = parse(addr_str)
+            expect(r).to(have_property('display', addr_str))
+            addr_str = 'user@example.com'
+            r = parse(addr_str)
+            expect(r).to(have_property('display', addr_str))
+            addr_str = '      user@example.com        '
+            r = parse(addr_str)
+            expect(r).to(have_property('display', addr_str.strip()))
+
+        with it('must be able to parse from the class Adress'):
+            addr_str = 'Firstname Secondname <user@example.com>'
+            r = parse(addr_str)
+            expect(r).to(equal(Address.parse(addr_str)))
+
         with it('must parse multiple addresses'):
             r = parse_list('First <f@example.com>, Second <s@example.com>')
             expect(r).to(be_a(AddressList))
             expect(r).to(have_property('addresses', ['f@example.com', 's@example.com']))
-
 
         with it('can sum AddressList'):
             a1 = AddressList(['User <u@example.com>'])
