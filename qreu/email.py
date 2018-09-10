@@ -433,7 +433,7 @@ class Email(object):
             # Get Attachments
             else:
                 files = return_vals.get('files', [])
-                new_attach = part.get('Content-Disposition', False)
+                new_attach = part.get('Content-Disposition', [])
                 if 'filename' in new_attach:
                     filename = [
                          f for f in new_attach.split(';') if 'filename=' in f
@@ -453,7 +453,7 @@ class Email(object):
         """
         for part in self.email.walk():
             if not part.get_content_maintype() in ['multipart', 'text']:
-                new_attach = part.get('Content-Disposition', False)
+                new_attach = part.get('Content-Disposition', [])
                 if 'filename' in new_attach:
                     if 'filename' in new_attach:
                         filename = [
