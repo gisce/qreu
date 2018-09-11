@@ -19,7 +19,7 @@ from six import PY2
 with description('Parsing an Email'):
     with before.all:
         self.raw_messages = []
-        for fixture in range(0, 4):
+        for fixture in range(0, 5):
             with open('spec/fixtures/{0}.txt'.format(fixture)) as f:
                 self.raw_messages.append(f.read())
 
@@ -101,6 +101,12 @@ with description('Parsing an Email'):
     with it('must to decode headers'):
         c = Email.parse("Subject: =?iso-8859-1?Q?ERROR_A_L'OBRIR_EL_LOT_DE_PERFILACI=D3_JUNY?=")
         expect(c.subject).to(equal(u"ERROR A L'OBRIR EL LOT DE PERFILACIÓ JUNY"))
+
+    with it('must get all attachments and avoid wrong body parts'):
+        c = Email.parse(self.raw_messages[4])
+        attch = [p for p in c.attachments]
+        expect(attch).to(be_empty)
+        expect(c.body_parts['files']).to(be_empty)
 
 with description("Creating an Email"):
     with context("empty"):
