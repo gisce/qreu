@@ -57,9 +57,28 @@ class FileSender(Sender):
 
 class SMTPSender(Sender):
     def __init__(
-            self, host='localhost', port=0, user=None, passwd=None,
+            self, host='localhost', port=25, user=None, passwd=None,
             ssl_keyfile=None, ssl_certfile=None, tls=False, ssl=False
     ):
+        """
+        Sender context to send through SMTP
+        :param host:            Host to the SMTP Server
+        :type host:             str
+        :param port:            Port for the SMTP Connection (Default is 25)
+        :type port:             int
+        :param user:            User for the SMTP Connection Login
+        :type user:             str
+        :param passwd:          Password for the SMTP Connection Login
+        :type passwd:           str
+        :param ssl_keyfile:     Path to the SSL keyfile (TLS Connection)
+        :type ssl_keyfile:      str
+        :param ssl_certfile:    Path to the SSL certfile (TLS Connection)
+        :type ssl_certfile:     str
+        :param tls:             Start TLS after basic SMTP connection
+        :type tls:              boolean
+        :param ssl:             Start connection as SMTP-SSL
+        :type ssl:              boolean
+        """
         super(SMTPSender, self).__init__(
             _host=host, _port=port,
             _user=user, _passwd=passwd,
