@@ -96,7 +96,6 @@ with description('Senders'):
                     530, "5.7.0 Must issue a STARTTLS command first.")
                 with patch('qreu.sendcontext.SMTP_SSL') as msmtp_ssl:
                     smtp_mocked = Mock()
-                    smtp_mocked.login.return_value = True
                     smtp_mocked.starttls.return_value = True
                     smtp_mocked.login.return_value = True
                     smtp_mocked.send.return_value = True
@@ -111,6 +110,24 @@ with description('Senders'):
                             ssl_certfile='ssl_certfile'
                     ) as sender:
                         expect(sender.send(self.test_mail)).to(be_true)
+
+        with it('must try SMTP_SSL connection if SSL is enabled'):
+            with patch('qreu.sendcontext.SMTP_SSL') as msmtp_ssl:
+                smtp_mocked = Mock()
+                smtp_mocked.login.return_value = True
+                smtp_mocked.send.return_value = True
+                smtp_mocked.sendmail.return_value = True
+                smtp_mocked.close.return_value = True
+                msmtp_ssl.return_value = smtp_mocked
+                with SMTPSender(
+                        host='host',
+                        user='user',
+                        passwd='passwd',
+                        ssl_keyfile='ssl_keyfile',
+                        ssl_certfile='ssl_certfile',
+                        ssl=True
+                ) as sender:
+                    expect(sender.send(self.test_mail)).to(be_true)
 
         with it('must raise exception after Failure if no TLS is enabled'):
             def call_wrongly():
