@@ -296,7 +296,7 @@ class Email(object):
             attachment_str = base64.encodestring(
                 input_buff.read().encode('utf-8'))
         else:
-            if '\n' not in input_b64:
+            if '\n' not in str(input_b64):
                 input_b64 = '\n'.join(
                     input_b64[pos:pos + 76]
                     for pos in xrange(0, len(input_b64), 76)

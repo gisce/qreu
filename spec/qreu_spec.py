@@ -361,7 +361,7 @@ with description("Creating an Email"):
             f_name = '0.txt'
             with open(f_path, 'r') as ffile:
                 text = ffile.read().strip()
-            encoded_text = base64.encodestring(text)
+            encoded_text = base64.encodestring(text.encode('utf-8'))
             e.add_attachment(input_b64=encoded_text, attname=f_name)
 
             for attachment in e.attachments:
