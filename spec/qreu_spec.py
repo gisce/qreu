@@ -359,10 +359,10 @@ with description("Creating an Email"):
             e = Email()
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
-            with open('f_path', 'r') as ffile:
+            with open(f_path, 'r') as ffile:
                 text = ffile.read().strip()
             encoded_text = base64.encodestring(text)
-            e.add_attachment(encoded_text)
+            e.add_attachment(input_b64=encoded_text, attname=f_name)
 
             for attachment in e.attachments:
                 filecontent = attachment['content']
@@ -370,7 +370,7 @@ with description("Creating an Email"):
             del e
             e = Email()
             not_ns = encoded_text.replace('\n', '')
-            e.add_attachment(not_ns)
+            e.add_attachment(input_b64=not_ns, attname=f_name)
 
             for attachment in e.attachments:
                 filecontent = attachment['content']
