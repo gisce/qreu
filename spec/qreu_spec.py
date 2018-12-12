@@ -353,6 +353,29 @@ with description("Creating an Email"):
 
             expect(call_wrongly).to(raise_error(ValueError))
 
+        with it('must add an attachments with b64'):
+            import base64
+
+            e = Email()
+            f_path = 'spec/fixtures/0.txt'
+            f_name = '0.txt'
+            with open('f_path', 'r') as ffile:
+                text = ffile.read().strip()
+            encoded_text = base64.encodestring(text)
+            e.add_attachment(encoded_text)
+
+            for attachment in e.attachments:
+                filecontent = attachment['content']
+                expect(filecontent).to(equal(encoded_text))
+            del e
+            e = Email()
+            not_ns = encoded_text.replace('\n', '')
+            e.add_attachment(not_ns)
+
+            for attachment in e.attachments:
+                filecontent = attachment['content']
+                expect(filecontent).to(equal(encoded_text))
+
     with context("using kwargs"):
         with before.all:
             self.vals = {
