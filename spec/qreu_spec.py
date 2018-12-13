@@ -366,15 +366,15 @@ with description("Creating an Email"):
 
             for attachment in e.attachments:
                 filecontent = attachment['content']
-                expect(filecontent).to(equal(encoded_text))
+                expect(filecontent).to(equal(encoded_text.decode('utf-8')))
             del e
             e = Email()
-            not_ns = encoded_text.replace('\n', '')
+            not_ns = encoded_text.replace(b'\n', b'')
             e.add_attachment(input_b64=not_ns, attname=f_name)
 
             for attachment in e.attachments:
                 filecontent = attachment['content']
-                expect(filecontent).to(equal(encoded_text))
+                expect(filecontent).to(equal(encoded_text.decode('utf-8')))
 
     with context("using kwargs"):
         with before.all:

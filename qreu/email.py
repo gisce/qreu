@@ -297,10 +297,8 @@ class Email(object):
                 input_buff.read().encode('utf-8'))
         else:
             if '\n' not in str(input_b64):
-                input_b64 = '\n'.join(
-                    input_b64[pos:pos + 76]
-                    for pos in xrange(0, len(input_b64), 76)
-                ) + '\n'
+                input_b64 = base64.decodestring(input_b64)
+                input_b64 = base64.encodestring(input_b64)
             attachment_str = input_b64
 
         attachment = MIMEApplication('', _subtype='octet-stream')
