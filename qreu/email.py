@@ -270,7 +270,7 @@ class Email(object):
         self.email.attach(msg_part)
         return True
 
-    def add_attachment(self, input_buff=False, attname=False):
+    def add_attachment(self, input_buff, attname=False):
         """
         Add an attachment file to the email
         :param input_buff:  Buffer of the file to attach (something to read)
@@ -280,8 +280,7 @@ class Email(object):
         :return:           True if Added, Exception if failed
         :rtype:            bool
         """
-        if not input_buff:
-            raise ValueError('Attachment not provided!')
+
         try:
             # Try to get name from input if not provided
             filename = attname or input_buff.name
@@ -290,11 +289,7 @@ class Email(object):
         from os.path import basename
         import base64
 
-        if input_buff:
-            attachment_str = base64.encodestring(
-                input_buff.read().encode('utf-8'))
-        else:
-            attachment_str = ''
+        attachment_str = base64.encodestring(input_buff.read().encode('utf-8'))
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
