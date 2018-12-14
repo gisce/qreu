@@ -270,19 +270,17 @@ class Email(object):
         self.email.attach(msg_part)
         return True
 
-    def add_attachment(self, input_buff=False, input_b64=False, attname=False):
+    def add_attachment(self, input_buff=False, attname=False):
         """
         Add an attachment file to the email
         :param input_buff:  Buffer of the file to attach (something to read)
         :type input_buff:   Buffer
-        :param input_b64:  Base64-based string to attach as file
-        :type input_b64:   str or bytes
         :param attname:    Name of the attachment
         :type attname:     str
         :return:           True if Added, Exception if failed
         :rtype:            bool
         """
-        if not (input_buff or input_b64):
+        if not input_buff:
             raise ValueError('Attachment not provided!')
         try:
             # Try to get name from input if not provided
@@ -296,10 +294,7 @@ class Email(object):
             attachment_str = base64.encodestring(
                 input_buff.read().encode('utf-8'))
         else:
-            if '\n' not in str(input_b64):
-                input_b64 = base64.decodestring(input_b64)
-                input_b64 = base64.encodestring(input_b64)
-            attachment_str = input_b64
+            attachment_str = ''
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')

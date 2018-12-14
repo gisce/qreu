@@ -316,26 +316,6 @@ with description("Creating an Email"):
                 filecontent = attachment['content']
                 expect(filecontent).to(equal(check_str))
 
-        with it('must add a base64 string as attachment to body'):
-            import base64
-            from io import StringIO
-            e = Email()
-            f_path = 'spec/fixtures/0.txt'
-            f_name = '0.txt'
-            with open(f_path) as f:
-                f_data = f.read()
-            base64_str = base64.encodestring(f_data.encode('utf-8'))
-            try:
-                base64_str = str(base64_str, 'utf-8')
-            except TypeError:
-                # Python 2.7 compat
-                base64_str = unicode(base64_str)
-            e.add_attachment(input_b64=base64_str, attname=f_name)
-            for attachment in e.attachments:
-                filename = attachment['name']
-                filecontent = attachment['content']
-                expect(filecontent).to(equal(base64_str))
-
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():
                 e = Email()
@@ -358,19 +338,14 @@ with description("Creating an Email"):
 
             e = Email()
             f_path = 'spec/fixtures/0.txt'
-            f_name = '0.txt'
+            f_name = str('0.txt')
             with open(f_path, 'r') as ffile:
-                text = ffile.read().strip()
-            encoded_text = base64.encodestring(text.encode('utf-8'))
-            e.add_attachment(input_b64=encoded_text, attname=f_name)
+                text = ffile.read()
 
-            for attachment in e.attachments:
-                filecontent = attachment['content']
-                expect(filecontent).to(equal(encoded_text.decode('utf-8')))
-            del e
-            e = Email()
-            not_ns = encoded_text.replace(b'\n', b'')
-            e.add_attachment(input_b64=not_ns, attname=f_name)
+            with open(f_path, 'r') as ffile:
+                e.add_attachment(input_buff=ffile, attname=f_name)
+
+            encoded_text = base64.encodestring(text.encode('utf-8'))
 
             for attachment in e.attachments:
                 filecontent = attachment['content']
