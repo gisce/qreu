@@ -11,6 +11,10 @@ from datetime import datetime
 
 from html2text import html2text
 from six import PY2
+if PY2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 import re
 
@@ -289,7 +293,8 @@ class Email(object):
         from os.path import basename
         import base64
 
-        attachment_str = base64.encodestring(input_buff.read().encode('utf-8'))
+        content = input_buff.getvalue() if isinstance(input_buff, StringIO) else input_buff.read()
+        attachment_str = base64.encodestring(content.encode('utf-8'))
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
