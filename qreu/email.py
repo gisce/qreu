@@ -294,7 +294,7 @@ class Email(object):
         import base64
 
         content = input_buff.getvalue() if isinstance(input_buff, StringIO) else input_buff.read()
-        attachment_str = base64.encodestring(content)
+        attachment_str = base64.b64encode(content)
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
