@@ -289,7 +289,7 @@ class Email(object):
         from os.path import basename
         import base64
 
-        attachment_str = base64.encodestring(input_buff.read().encode('utf-8'))
+        attachment_str = base64.encodestring(input_buff.getvalue().encode('utf-8'))
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
