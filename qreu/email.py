@@ -13,8 +13,9 @@ from html2text import html2text
 from six import PY2
 if PY2:
     from StringIO import StringIO
+    BytesIO = StringIO
 else:
-    from io import StringIO
+    from io import StringIO, BytesIO
 
 import re
 
@@ -293,7 +294,7 @@ class Email(object):
         from os.path import basename
         import base64
 
-        content = input_buff.getvalue() if isinstance(input_buff, StringIO) else input_buff.read()
+        content = input_buff.getvalue() if isinstance(input_buff, (StringIO, BytesIO)) else input_buff.read()
         attachment_str = base64.encodestring(content)
 
         attachment = MIMEApplication('', _subtype='octet-stream')
