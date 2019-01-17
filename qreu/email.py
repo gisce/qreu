@@ -8,6 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from datetime import datetime
+from StringIO import StringIO
 
 from html2text import html2text
 from six import PY2
@@ -289,7 +290,8 @@ class Email(object):
         from os.path import basename
         import base64
 
-        attachment_str = base64.encodestring(input_buff.getvalue().encode('utf-8'))
+        content = input_buff.getvalue() if isinstance(input_buff, StringIO) else input_buff.read()
+        attachment_str = base64.encodestring(content.encode('utf-8'))
 
         attachment = MIMEApplication('', _subtype='octet-stream')
         attachment.set_charset('utf-8')
