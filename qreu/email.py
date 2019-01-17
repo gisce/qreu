@@ -8,10 +8,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from datetime import datetime
-from StringIO import StringIO
 
 from html2text import html2text
 from six import PY2
+if PY2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 import re
 
