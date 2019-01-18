@@ -270,20 +270,19 @@ with description("Creating an Email"):
             e = Email()
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
-            with open(f_path) as f:
+            with open(f_path, 'rb') as f:
                 expect(e.add_attachment(input_buff=f)).to(be_true)
             expect(e.body_parts).to(have_key('files'))
             expect(e.body_parts['files']).to(equal([f_name]))
-            with open(f_path) as f:
+            with open(f_path, 'rb') as f:
                 expect(e.add_attachment(input_buff=f)).to(be_true)
             files = [attachment['name'] for attachment in e.attachments]
             expect(files).to(equal([f_name, f_name]))
             for attachment in e.attachments:
                 filename = attachment['name']
                 filecontent = attachment['content']
-                with open(f_path) as f:
-                    attachment_str = base64.encodestring(
-                        f.read().encode('utf-8'))
+                with open(f_path, 'rb') as f:
+                    attachment_str = base64.encodestring(f.read())
                     try:
                         attachment_str = str(attachment_str, 'utf-8')
                     except TypeError:
@@ -293,18 +292,18 @@ with description("Creating an Email"):
 
         with it('must add an iostring as attachment to body'):
             import base64
-            from io import StringIO
+            from io import StringIO, BytesIO
             e = Email()
             f_path = 'spec/fixtures/0.txt'
             f_name = '0.txt'
-            with open(f_path, 'r') as f:
+            with open(f_path, 'rb') as f:
                 f_data = f.read()
             try:
-                input_iostr = StringIO(f_data)
+                input_iostr = BytesIO(f_data)
             except TypeError:
                 # Python 2.7 compat
                 input_iostr = StringIO(unicode(f_data))
-            check_str = base64.encodestring(f_data.encode('utf-8'))
+            check_str = base64.encodestring(f_data)
             try:
                 check_str = str(check_str, 'utf-8')
             except TypeError:
