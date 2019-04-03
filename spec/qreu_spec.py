@@ -104,9 +104,9 @@ with description('Parsing an Email'):
 
     with it('must get all attachments and avoid wrong body parts'):
         c = Email.parse(self.raw_messages[4])
-        attch = [p for p in c.attachments]
-        expect(attch).to(be_empty)
-        expect(c.body_parts['files']).to(be_empty)
+        attch = [p['name'] for p in c.attachments]
+        expect(attch).to(contain_exactly('image.png'))
+        expect(c.body_parts['files']).to(contain_exactly('image.png'))
 
 with description("Creating an Email"):
     with context("empty"):
