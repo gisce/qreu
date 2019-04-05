@@ -6,7 +6,7 @@ from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate
+from email.utils import formatdate, make_msgid
 from datetime import datetime
 
 from html2text import html2text
@@ -42,6 +42,8 @@ RE_PATTERNS = re.compile('({0})'.format('|'.join(
 
 FW_PATTERNS = re.compile('({0})'.format('|'.join(
     [
+        '^Fw:',
+        '^Fwd:',
         '^VS:',
         '^Doorst:',
         '^VL:',
@@ -110,6 +112,33 @@ class Email(object):
         Send himself using the current sendercontext
         """
         return get_current_sender().sendmail(self)
+
+    def forward(self, **kwargs):
+        fmail = Email.parse(self.mime_string)
+
+        clean_headers = [
+            'from', 'to', 'cc', 'bcc', 'references', 'message-id', 'subject'
+        ]
+        for cl in clean_headers:
+            cl = Email.fix_header_name(cl)
+            if cl in fmail.email:
+                del fmail.email[cl]
+
+        for header in ['from', 'to', 'cc', 'bcc']:
+            value = kwargs.pop(header, None)
+            if value:
+                fmail.add_header(header, value)
+
+        # Add original mail to references
+        references = self.references + [self.header('Message-ID')]
+        fmail.add_header('References', ' '.join(references))
+
+        # Add a new Message-ID
+        fmail.add_header('Message-ID', make_msgid())
+
+        # Add subject with forward preffix
+        fmail.add_header('Subject', 'Fwd: {}'.format(self.subject))
+        return fmail
 
     @staticmethod
     def fix_header_name(header_name):
