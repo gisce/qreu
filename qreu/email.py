@@ -60,6 +60,11 @@ FW_PATTERNS = re.compile('({0})'.format('|'.join(
     ])), re.IGNORECASE)
 
 
+def get_body_html(html):
+    body = re.findall('<body[^>]*>(.*)</body>', html.replace('\r\n', '').replace('\n', ''))
+    return body and body[0].strip() or html.strip()
+
+
 class Email(object):
     """
     Correu object
@@ -138,6 +143,41 @@ class Email(object):
 
         # Add subject with forward preffix
         fmail.add_header('Subject', 'Fwd: {}'.format(self.subject))
+
+        # Allow to pre-append to original text
+        body_text = kwargs.get('body_text', False)
+        body_html = kwargs.get('body_html', False)
+
+        original_html = fmail.body_parts.get('html')
+        if original_html:
+            original_html = get_body_html(original_html)
+
+        original_plain = fmail.body_parts.get('plain')
+
+        if body_html:
+            body_html = body_html.format(original=original_html)
+
+        if body_text:
+            body_text = body_text.format(original=original_plain)
+        elif body_html:
+            body_text = html2text(body_html)
+
+        # Update the body parts
+        for part in fmail.email.walk():
+            maintype, subtype = part.get_content_type().split('/')
+            # Multipart/* are containers, so we skip it
+            if maintype == 'multipart':
+                continue
+            # Get Text and HTML
+            filename = part.get_filename()
+            if filename:
+                continue
+            elif maintype == 'text':
+                if subtype == 'plain':
+                    part.set_payload(body_text, charset='utf-8')
+                elif subtype == 'html':
+                    part.set_payload(body_html, charset='utf-8')
+
         return fmail
 
     @staticmethod

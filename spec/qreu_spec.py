@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from qreu import Email, address
 from qreu.address import AddressList, Address
 from qreu.sendcontext import Sender
+from qreu.email import get_body_html
 from datetime import datetime, tzinfo, timedelta
 from mock import patch
 import qreu.address
@@ -459,3 +460,24 @@ with description('Forwarding an email'):
         mf = self.mf
         expect(mf.is_forwarded).to(be_true)
         expect(mf.header('Subject').startswith('Fwd:')).to(be_true)
+
+
+with description('Parsing HTML'):
+    with it('should return the body'):
+        html = """<html><head><title>Foo</title></head><body><p>This is the <strong>body</strong>!</p></body></html>"""
+        expect(get_body_html(html)).to(equal("<p>This is the <strong>body</strong>!</p>"))
+    with context('if orignal html has new lines'):
+        with it('should return the body too'):
+            html = """<html>
+                        <head>
+                           <title>Foo</title>
+                        </head>
+                        <body>
+                          <p>This is the <strong>body</strong>!</p>
+                        </body>
+                      </html>"""
+            expect(get_body_html(html)).to(equal("<p>This is the <strong>body</strong>!</p>"))
+    with context('if there is no body'):
+        with it('should return the complete text'):
+            html = "<p>This is the <strong>body</strong>!</p>"
+            expect(get_body_html(html)).to(equal("<p>This is the <strong>body</strong>!</p>"))
