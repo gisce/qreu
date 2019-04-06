@@ -389,7 +389,7 @@ with description("Creating an Email"):
 
         with it('must add addresses correctly as "name" <address>'):
             address = 'spécial <special@example.com>'
-            parsed = 'spécial<special@example.com>'
+            parsed = 'spécial <special@example.com>'
             e = Email(to=address)
             expect(e.to).to(equal([parsed]))
             e = Email(cc=address)

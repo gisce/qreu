@@ -198,33 +198,10 @@ class Email(object):
                 value = [value]
             header_value = []
             for addr in value:
-                # For each address in the recipients headers
-                # Do the Header Object
-                # PY3 works fine with Header(values, charset='utf-8')
-                # PY2:
-                # - Does not escape correctly the unicode values
-                # - Must encode the display name as a HEADER
-                #    so the item is encoded properly
-                # - The encoded display name and the address are joined
-                #    into the Header of the email
                 mail_addr = address.parse(addr)
-                display_name = Header(
-                    mail_addr.display_name, charset='utf-8').encode()
-                if display_name:
-                    # decode_header method in PY2 does not look for closed items
-                    # so a ' ' separator is required between items of a Header
-                    if PY2:
-                        base_addr = '{} <{}>'
-                    else:
-                        base_addr = '{}<{}>'
-                    header_value.append(
-                        base_addr.format(
-                            display_name,
-                            mail_addr.address
-                        ).strip()
-                    )
-                else:
-                    header_value.append(mail_addr.address)
+                header_value.append(
+                    Header(mail_addr.display, charset='utf-8').encode()
+                )
             header_value = ','.join(header_value)
         else:
             header_value = Header(value, charset='utf-8').encode()
