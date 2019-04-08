@@ -165,18 +165,16 @@ class Email(object):
         # Update the body parts
         for part in fmail.email.walk():
             maintype, subtype = part.get_content_type().split('/')
-            # Multipart/* are containers, so we skip it
-            if maintype == 'multipart':
-                continue
-            # Get Text and HTML
-            filename = part.get_filename()
-            if filename:
+            if maintype == 'multipart' or part.get_filename():
                 continue
             elif maintype == 'text':
-                if subtype == 'plain':
-                    part.set_payload(body_text, charset='utf-8')
-                elif subtype == 'html':
-                    part.set_payload(body_html, charset='utf-8')
+                charset = part.get_content_charset()
+                if subtype == 'plain' and body_text:
+                    part.replace_header('Content-Transfer-Encoding', 'quoted-printable')
+                    part.set_payload(body_text, charset=charset)
+                elif subtype == 'html' and body_html:
+                    part.replace_header('Content-Transfer-Encoding', 'quoted-printable')
+                    part.set_payload(body_html, charset=charset)
 
         return fmail
 
