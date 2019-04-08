@@ -6,7 +6,7 @@ from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate
+from email.utils import formatdate, make_msgid
 from datetime import datetime
 
 from html2text import html2text
@@ -42,6 +42,8 @@ RE_PATTERNS = re.compile('({0})'.format('|'.join(
 
 FW_PATTERNS = re.compile('({0})'.format('|'.join(
     [
+        '^Fw:',
+        '^Fwd:',
         '^VS:',
         '^Doorst:',
         '^VL:',
@@ -56,6 +58,11 @@ FW_PATTERNS = re.compile('({0})'.format('|'.join(
         '^PD:',
         '^İLT'
     ])), re.IGNORECASE)
+
+
+def get_body_html(html):
+    body = re.findall('<body[^>]*>(.*)</body>', html.replace('\r\n', '').replace('\n', ''))
+    return body and body[0].strip() or html.strip()
 
 
 class Email(object):
@@ -110,6 +117,68 @@ class Email(object):
         Send himself using the current sendercontext
         """
         return get_current_sender().sendmail(self)
+
+    def forward(self, **kwargs):
+        fmail = Email.parse(self.mime_string)
+
+        clean_headers = [
+            'from', 'to', 'cc', 'bcc', 'references', 'message-id', 'subject'
+        ]
+        for cl in clean_headers:
+            cl = Email.fix_header_name(cl)
+            if cl in fmail.email:
+                del fmail.email[cl]
+
+        for header in ['from', 'to', 'cc', 'bcc']:
+            value = kwargs.pop(header, None)
+            if value:
+                fmail.add_header(header, value)
+
+        # Add original mail to references
+        references = self.references + [self.header('Message-ID')]
+        fmail.add_header('References', ' '.join(references))
+
+        # Add a new Message-ID
+        fmail.add_header('Message-ID', make_msgid())
+
+        # Add subject with forward preffix
+        fmail.add_header('Subject', 'Fwd: {}'.format(self.subject))
+
+        # Allow to pre-append to original text
+        body_text = kwargs.get('body_text', False)
+        body_html = kwargs.get('body_html', False)
+
+        original_html = fmail.body_parts.get('html')
+        if original_html:
+            original_html = get_body_html(original_html)
+
+        original_plain = fmail.body_parts.get('plain')
+
+        if body_html:
+            body_html = body_html.format(original=original_html)
+
+        if body_text:
+            body_text = body_text.format(original=original_plain)
+        elif body_html:
+            body_text = html2text(body_html)
+
+        # Update the body parts
+        for part in fmail.email.walk():
+            maintype, subtype = part.get_content_type().split('/')
+            # Multipart/* are containers, so we skip it
+            if maintype == 'multipart':
+                continue
+            # Get Text and HTML
+            filename = part.get_filename()
+            if filename:
+                continue
+            elif maintype == 'text':
+                if subtype == 'plain':
+                    part.set_payload(body_text, charset='utf-8')
+                elif subtype == 'html':
+                    part.set_payload(body_html, charset='utf-8')
+
+        return fmail
 
     @staticmethod
     def fix_header_name(header_name):
