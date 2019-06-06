@@ -1,5 +1,5 @@
+# coding=utf-8
 from qreu.address import parse, parse_list, AddressList, Address
-
 from expects import *
 
 
