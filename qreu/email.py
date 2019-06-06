@@ -235,12 +235,13 @@ class Email(object):
         if header_value:
             for part in decode_header(header_value):
                 if part[1]:
-                    result.append(part[0].decode(part[1]))
+                    encoded = part[0].decode(part[1])
                 elif isinstance(part[0], bytes):
-                    result.append(part[0].decode('utf-8'))
+                    encoded = part[0].decode('utf-8')
                 else:
-                    result.append(part[0])
-            header_value = ''.join(result)
+                    encoded = part[0]
+                result.append(encoded.strip())
+            header_value = ' '.join(result)
 
         return header_value
 
@@ -301,12 +302,13 @@ class Email(object):
             result = []
             for part in decode_header(header_value):
                 if part[1]:
-                    result.append(part[0].decode(part[1]))
+                    encoded = part[0].decode(part[1])
                 elif isinstance(part[0], bytes):
-                    result.append(part[0].decode('utf-8'))
+                    encoded = part[0].decode('utf-8')
                 else:
-                    result.append(part[0])
-            header_value = ''.join(result)
+                    encoded = part[0]
+                result.append(encoded.strip())
+            header_value = ' '.join(result)
             self.bccs = header_value
         else:
             self.email[header] = header_value
