@@ -142,7 +142,9 @@ class Email(object):
         fmail.add_header('Message-ID', make_msgid())
 
         # Add subject with forward preffix
-        fmail.add_header('Subject', 'Fwd: {}'.format(self.subject))
+        prefix_subject = kwargs.pop('prefix_subject', True)
+        if prefix_subject:
+            fmail.add_header('Subject', 'Fwd: {}'.format(self.subject))
 
         # Allow to pre-append to original text
         body_text = kwargs.get('body_text', False)
