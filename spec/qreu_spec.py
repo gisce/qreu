@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import absolute_import, unicode_literals
 from qreu import Email, address
 from qreu.address import AddressList, Address
 from qreu.sendcontext import Sender
@@ -20,7 +19,7 @@ from six import PY2
 with description('Parsing an Email'):
     with before.all:
         self.raw_messages = []
-        for fixture in range(0, 6):
+        for fixture in range(0, 7):
             with open('spec/fixtures/{0}.txt'.format(fixture)) as f:
                 self.raw_messages.append(f.read())
 
@@ -39,6 +38,10 @@ with description('Parsing an Email'):
     with it('must kwnon if a email is fowared'):
         c = Email.parse(self.raw_messages[2])
         expect(c.is_forwarded).to(be_true)
+
+    with it('must knwon if an email is auto generated'):
+        c = Email.parse(self.raw_messages[6])
+        expect(c.is_auto_generated).to(be_true)
 
     with it('must only remove FW and RV patterns'):
         c = Email.parse("Subject: =?utf-8?q?Recordatori=3A_?=")
@@ -332,7 +335,7 @@ with description("Creating an Email"):
             from io import StringIO
             def call_wrongly():
                 e = Email()
-                input_iostr = StringIO('Test string on StringIO')
+                input_iostr = StringIO(u'Test string on StringIO')
                 e.add_attachment(input_iostr)
 
             expect(call_wrongly).to(raise_error(ValueError))
@@ -393,8 +396,8 @@ with description("Creating an Email"):
             expect(e.body_parts['html']).to(equal(self.vals['body_html']))
 
         with it('must add addresses correctly as "name" <address>'):
-            address = 'spécial <special@example.com>'
-            parsed  = 'spécial <special@example.com>'
+            address = u'spécial <special@example.com>'
+            parsed  = u'spécial <special@example.com>'
             e = Email(to=address)
             expect(e.to).to(equal([parsed]))
             e = Email(cc=address)

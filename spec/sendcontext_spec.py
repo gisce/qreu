@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import absolute_import, unicode_literals
 from mamba import *
 from expects import *
 from mock import patch, Mock
