@@ -408,6 +408,10 @@ class Email(object):
         return bool(re.match(FW_PATTERNS, self.header('Subject', '')))
 
     @property
+    def is_auto_generated(self):
+        return self.header('auto-submitted') == 'auto-generated'
+
+    @property
     def subject(self):
         """
         Clean subject without abbreviations
