@@ -347,6 +347,11 @@ class Email(object):
         self.email.attach(msg_part)
         return True
 
+    def remove_accent(self, text):
+        from unidecode import unidecode
+        return unidecode(text)
+
+
     def add_attachment(self, input_buff, attname=False):
         """
         Add an attachment file to the email
@@ -379,7 +384,7 @@ class Email(object):
         attachment.set_charset('utf-8')
         attachment.add_header(
             'Content-Disposition',
-            'attachment; filename="%s"' % basename(filename)
+            'attachment; filename="%s"' % self.remove_accent(basename(filename))
         )
         attachment.add_header('Content-Transfer-Encoding', 'base64')
         attachment.set_payload(
