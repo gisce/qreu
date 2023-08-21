@@ -488,3 +488,26 @@ with description('Parsing HTML'):
         with it('should return the complete text'):
             html = "<p>This is the <strong>body</strong>!</p>"
             expect(get_body_html(html)).to(equal("<p>This is the <strong>body</strong>!</p>"))
+
+with description('Filename without accents'):
+    with it('should return filename without accents'):
+        from os.path import basename
+        from io import BytesIO
+        e = Email()
+        original_filename_1 = u"áè_í_ó_ú.txt"
+        expected_file_name_1 = u"ae_i_o_u.txt"
+
+        new_filename_1 = e.remove_accent(basename(original_filename_1))
+        expect(new_filename_1).to(equal(expected_file_name_1))
+
+        e.add_attachment(
+            BytesIO(b'testContent'), attname=original_filename_1
+        )
+        email_attcs = [x for x in e.attachments]
+        expect(len(email_attcs)).to(equal(1))
+        expect(email_attcs[0]['name']).to(equal(expected_file_name_1))
+
+        original_filename_2 = u"hola.pdf"
+        expected_file_name_2 = u"hola.pdf"
+        new_filename_2 = e.remove_accent(basename(original_filename_2))
+        expect(new_filename_2).to(equal(expected_file_name_2))
