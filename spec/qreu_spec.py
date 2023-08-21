@@ -489,6 +489,33 @@ with description('Parsing HTML'):
             html = "<p>This is the <strong>body</strong>!</p>"
             expect(get_body_html(html)).to(equal("<p>This is the <strong>body</strong>!</p>"))
 
+with description('Show file type'):
+    with it('should return the correct file type'):
+        from io import BytesIO
+        e = Email()
+        test_file_1 = u'testfile1.docx'
+        expected_file_type_1 = u'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+        e.add_attachment(
+            BytesIO(b'testContent1'), attname=test_file_1
+        )
+        email_attcs_1 = [x for x in e.attachments]
+        expect(len(email_attcs_1)).to(equal(1))
+        expect(email_attcs_1[0]['type']).to(equal(expected_file_type_1))
+
+    with it('should return a default type'):
+        from io import BytesIO
+        e = Email()
+        test_file_2 = u"testfile2.klaslkdlkadlk"
+        expected_file_type_2 = u'application/octet-stream'
+
+        e.add_attachment(
+            BytesIO(b'testContent2'), attname=test_file_2
+        )
+        email_attcs_2 = [x for x in e.attachments]
+        expect(len(email_attcs_2)).to(equal(1))
+        expect(email_attcs_2[0]['type']).to(equal(expected_file_type_2))
+
 with description('Filename without accents'):
     with it('should return filename without accents'):
         from os.path import basename
@@ -511,3 +538,4 @@ with description('Filename without accents'):
         expected_file_name_2 = u"hola.pdf"
         new_filename_2 = e.remove_accent(basename(original_filename_2))
         expect(new_filename_2).to(equal(expected_file_name_2))
+

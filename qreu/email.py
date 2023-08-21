@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import email
+import mimetypes
 from email.header import decode_header, Header
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -373,7 +374,13 @@ class Email(object):
         content = input_buff.getvalue() if isinstance(input_buff, (StringIO, BytesIO)) else input_buff.read()
         attachment_str = base64.encodestring(content)
 
-        attachment = MIMEApplication('', _subtype='octet-stream')
+        filetype = mimetypes.guess_type(filename)[0]
+        subtype = 'octet-stream'
+        if filetype:
+            splitedfiletype = filetype.split('/')[-1]
+            subtype = splitedfiletype
+        attachment = MIMEApplication('', _subtype=subtype)
+
         attachment.set_charset('utf-8')
         attachment.add_header(
             'Content-Disposition',
