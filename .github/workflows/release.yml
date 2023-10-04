@@ -15,7 +15,7 @@ permissions:
   discussions: write
 
 jobs:
-  build:
+  upload-to-pypi:
     runs-on: [self-hosted, Keroberos]
     steps:
       - uses: actions/checkout@v3
@@ -37,6 +37,12 @@ jobs:
 
       - name: Publish a Python distribution to PyPI
         if: ${{ contains(github.ref, '-rc') }} == false
-        uses: conchylicultor/pypi-build-publish@v1
-        with:
-          pypi-token: ${{ secrets.PYPI_MASTER_TOKEN }}
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_MASTER_TOKEN }}
+          SCRIPTS_PATH: /home/ci_repos/ci_scripts
+        run: |
+          . $SCRIPTS_PATH/load_pyenv.sh
+          pyenv activate bump
+          pip install --upgrade twine
+          python setup.py sdist
+          printf '__token__\n$PYPI_TOKEN\n' |twine upload dist/*
