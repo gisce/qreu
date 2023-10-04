@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='qreu',
-    version='0.10.1',
+    version='0.11.0',
     packages=find_packages(),
     url='https://github.com/gisce/qreu',
     install_requires=[
