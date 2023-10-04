@@ -372,7 +372,9 @@ class Email(object):
         import base64
 
         content = input_buff.getvalue() if isinstance(input_buff, (StringIO, BytesIO)) else input_buff.read()
-        attachment_str = base64.encodestring(content)
+        # attachment_str = base64.encodestring(content)
+        attachment_str = content.decode('utf-8')
+
 
         filetype = mimetypes.guess_type(filename)[0]
         subtype = 'octet-stream'
@@ -384,7 +386,7 @@ class Email(object):
         attachment.set_charset('utf-8')
         attachment.add_header(
             'Content-Disposition',
-            'attachment; filename="%s"' % self.remove_accent(basename(filename))
+            'attachment; filename="%s"' % self.remove_accent(u'{}'.format(basename(filename)))
         )
         attachment.add_header('Content-Transfer-Encoding', 'base64')
         attachment.set_payload(

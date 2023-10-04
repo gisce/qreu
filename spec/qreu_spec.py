@@ -290,12 +290,14 @@ with description("Creating an Email"):
                 filename = attachment['name']
                 filecontent = attachment['content']
                 with open(f_path, 'rb') as f:
-                    attachment_str = base64.encodestring(f.read())
-                    try:
-                        attachment_str = str(attachment_str, 'utf-8')
-                    except TypeError:
-                        # Python 2.7 compat
-                        attachment_str = unicode(attachment_str)
+                    # attachment_str = base64.encodestring(f.read())
+                    attachment_str = f.read().decode('utf-8')
+                    # try:
+                    #     attachment_str = str(attachment_str, 'utf-8')
+                    # except TypeError as e:
+                    #     print(e)
+                    #     # Python 2.7 compat
+                    #     attachment_str = unicode(attachment_str)
                 expect(filecontent).to(equal(attachment_str))
 
         with it('must add an iostring as attachment to body'):
@@ -306,17 +308,15 @@ with description("Creating an Email"):
             f_name = '0.txt'
             with open(f_path, 'rb') as f:
                 f_data = f.read()
-            try:
-                input_iostr = BytesIO(f_data)
-            except TypeError:
-                # Python 2.7 compat
-                input_iostr = StringIO(unicode(f_data))
-            check_str = base64.encodestring(f_data)
-            try:
-                check_str = str(check_str, 'utf-8')
-            except TypeError:
-                # Python 2.7 compat
-                check_str = unicode(check_str)
+
+            input_iostr = BytesIO(f_data)
+            check_str = f_data.decode('utf-8')
+            # check_str = base64.encodestring(f_data)
+            # try:
+            #     check_str = str(check_str, 'utf-8')
+            # except TypeError:
+            #     # Python 2.7 compat
+            #     check_str = unicode(check_str)
             e.add_attachment(input_buff=input_iostr, attname=f_name)
             for attachment in e.attachments:
                 filename = attachment['name']
