@@ -30,6 +30,8 @@ jobs:
     if: ${{ !startsWith(github.event.head_commit.message, 'Bump to v') }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PUB_MASTER_PUSH_TOKEN }}
       - name: Update python packages
         run: |
           . $SCRIPTS_PATH/load_pyenv.sh
