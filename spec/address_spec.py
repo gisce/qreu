@@ -11,7 +11,7 @@ with description('address module'):
             expect(r).to(have_property('display_name', 'Firstname Secondname'))
 
         with it('must have a display with a formatted address as on creation'):
-            addr_str = 'Firstname Secondname <user@example.com>'
+            addr_str = '"Firstname Secondname" <user@example.com>'
             r = parse(addr_str)
             expect(r).to(have_property('display', addr_str))
             addr_str = 'user@example.com'
