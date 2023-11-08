@@ -14,7 +14,7 @@ class Address(BaseAddress):
     @property
     def display(self):
         if self.display_name:
-            return '{display_name} <{address}>'.format(**self._asdict())
+            return '"{display_name}" <{address}>'.format(**self._asdict())
         return self.address
 
     @staticmethod
