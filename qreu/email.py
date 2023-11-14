@@ -10,6 +10,7 @@ from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 from datetime import datetime
 
+import six
 from html2text import html2text
 from six import PY2
 if PY2:
@@ -372,8 +373,11 @@ class Email(object):
         import base64
 
         content = input_buff.getvalue() if isinstance(input_buff, (StringIO, BytesIO)) else input_buff.read()
-        # attachment_str = base64.encodestring(content)
-        attachment_str = content.decode('utf-8')
+        if six.PY2:
+            attachment_str = base64.encodestring(content)
+        else:
+            # TODO Revisar
+            attachment_str = content.decode('utf-8')
 
 
         filetype = mimetypes.guess_type(filename)[0]
