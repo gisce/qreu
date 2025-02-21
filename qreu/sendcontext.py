@@ -128,3 +128,75 @@ class SMTPSender(Sender):
         self._connection.sendmail(
             from_mail, mail.recipients_addresses, mail.mime_string)
         return True
+
+class MicrosoftGraphSender(Sender):
+    """
+    Sender context to send emails using Microsoft Graph API.
+    """
+    def __init__(self, client_id, client_secret, tenant_id, email_address):
+        """
+        :param client_id: Azure AD Client ID
+        :type client_id: str
+        :param client_secret: Azure AD Client Secret
+        :type client_secret: str
+        :param tenant_id: Azure AD Tenant ID
+        :type tenant_id: str
+        :param email_address: Email address used for sending
+        :type email_address: str
+        """
+        super(GraphSender, self).__init__(
+            _client_id=client_id, _client_secret=client_secret,
+            _tenant_id=tenant_id, _email_address=email_address
+        )
+        self._access_token = None
+
+    def __enter__(self):
+        import msal
+        authority_url = "https://login.microsoftonline.com/{0}".format(self._tenant_id)
+        app = msal.ConfidentialClientApplication(
+            self._client_id, authority=authority_url, client_credential=self._client_secret
+        )
+        result = app.acquire_token_silent(["https://graph.microsoft.com/.default"], account=None)
+        if not result:
+            result = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
+
+        if "access_token" in result:
+            self._access_token = result["access_token"]
+        else:
+            raise Exception("Failed to acquire token: {0}".format(result.get("error_description", result)))
+
+        return super(GraphSender, self).__enter__()
+
+    def sendmail(self, mail):
+        """
+        Send the qreu.Email object through Microsoft Graph API.
+        :param mail: qreu.Email object to send
+        :type mail: Email
+        """
+        from_mail = mail.from_
+        if isinstance(mail.from_, Address):
+            from_mail = from_mail.address
+
+        email_data = {
+            "message": {
+                "subject": mail.subject,
+                "body": {
+                    "contentType": "HTML" if mail.body_html else "Text",
+                    "content": mail.body_html or mail.body_text
+                },
+                "toRecipients": [{"emailAddress": {"address": addr}} for addr in mail.recipients_addresses],
+                "from": {"emailAddress": {"address": from_mail}}
+            }
+        }
+
+        url = "https://graph.microsoft.com/v1.0/users/{}/sendMail".format(self._email_address)
+        headers = {
+            "Authorization": "Bearer " + self._access_token,
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=email_data, headers=headers)
+        if response.status_code == 202:
+            return True
+        else:
+            raise Exception("Error al enviar correo: {} - {}".format(response.status_code, response.text))
