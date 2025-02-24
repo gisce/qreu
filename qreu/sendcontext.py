@@ -183,7 +183,6 @@ class MicrosoftGraphSender(Sender):
         if isinstance(mail.from_, Address):
             from_mail = from_mail.address
 
-        # Extraer contenido del cuerpo del email
         body_html = mail.body_parts.get("html", None)
         body_text = mail.body_parts.get("plain", None)
 
@@ -197,6 +196,20 @@ class MicrosoftGraphSender(Sender):
             body_content = "No content"
             content_type = "Text"
 
+
+        attachments = []
+        for attachment in mail.attachments:
+            file_name = attachment["name"]
+            file_content = attachment["content"]  # Esto ya está en Base64 en qreu
+            file_type = attachment["type"]  # Tipo MIME del archivo
+
+            attachments.append({
+                "@odata.type": "#microsoft.graph.fileAttachment",
+                "name": file_name,
+                "contentType": file_type,
+                "contentBytes": file_content  # Ya está en Base64
+            })
+
         email_data = {
             "message": {
                 "subject": mail.subject,
@@ -208,6 +221,9 @@ class MicrosoftGraphSender(Sender):
                 "from": {"emailAddress": {"address": from_mail}}
             }
         }
+
+        if attachments:
+            email_data["message"]["attachments"] = attachments
 
         url = "https://graph.microsoft.com/v1.0/users/{}/sendMail".format(self._email_address)
         headers = {
