@@ -144,7 +144,7 @@ class MicrosoftGraphSender(Sender):
         :param email_address: Email address used for sending
         :type email_address: str
         """
-        super(GraphSender, self).__init__(
+        super(MicrosoftGraphSender, self).__init__(
             _client_id=client_id, _client_secret=client_secret,
             _tenant_id=tenant_id, _email_address=email_address
         )
@@ -165,7 +165,7 @@ class MicrosoftGraphSender(Sender):
         else:
             raise Exception("Failed to acquire token: {0}".format(result.get("error_description", result)))
 
-        return super(GraphSender, self).__enter__()
+        return super(MicrosoftGraphSender, self).__enter__()
 
     def sendmail(self, mail):
         """
@@ -173,6 +173,7 @@ class MicrosoftGraphSender(Sender):
         :param mail: qreu.Email object to send
         :type mail: Email
         """
+        import requests
         from_mail = mail.from_
         if isinstance(mail.from_, Address):
             from_mail = from_mail.address
