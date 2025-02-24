@@ -183,12 +183,26 @@ class MicrosoftGraphSender(Sender):
         if isinstance(mail.from_, Address):
             from_mail = from_mail.address
 
+        # Extraer contenido del cuerpo del email
+        body_html = mail.body_parts.get("html", None)
+        body_text = mail.body_parts.get("plain", None)
+
+        if body_html:
+            body_content = body_html
+            content_type = "HTML"
+        elif body_text:
+            body_content = body_text
+            content_type = "Text"
+        else:
+            body_content = "No content"
+            content_type = "Text"
+
         email_data = {
             "message": {
                 "subject": mail.subject,
                 "body": {
-                    "contentType": "HTML" if mail.body_html else "Text",
-                    "content": mail.body_html or mail.body_text
+                    "contentType": content_type,
+                    "content": body_content
                 },
                 "toRecipients": [{"emailAddress": {"address": addr}} for addr in mail.recipients_addresses],
                 "from": {"emailAddress": {"address": from_mail}}
