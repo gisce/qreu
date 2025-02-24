@@ -55,6 +55,7 @@ class FileSender(Sender):
             writer.write(mail.mime_string)
         return True
 
+
 class SMTPSender(Sender):
     def __init__(
             self, host='localhost', port=25, user=None, passwd=None,
@@ -129,6 +130,7 @@ class SMTPSender(Sender):
             from_mail, mail.recipients_addresses, mail.mime_string)
         return True
 
+
 class MicrosoftGraphSender(Sender):
     """
     Sender context to send emails using Microsoft Graph API.
@@ -166,6 +168,9 @@ class MicrosoftGraphSender(Sender):
             raise Exception("Failed to acquire token: {0}".format(result.get("error_description", result)))
 
         return super(MicrosoftGraphSender, self).__enter__()
+
+    def __exit__(self, etype, evalue, etraceback):
+        super(MicrosoftGraphSender, self).__exit__(etype, evalue, etraceback)
 
     def sendmail(self, mail):
         """
