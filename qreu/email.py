@@ -385,14 +385,13 @@ class Email(object):
         if filetype:
             splitedfiletype = filetype.split('/')[-1]
             subtype = splitedfiletype
-        attachment = MIMEApplication('', _subtype=subtype)
+        attachment = MIMEApplication('', _subtype=subtype, _encoder=email.encoders.encode_base64)
 
         attachment.set_charset('utf-8')
         attachment.add_header(
             'Content-Disposition',
             'attachment; filename="%s"' % self.remove_accent(u'{}'.format(basename(filename)))
         )
-        attachment.add_header('Content-Transfer-Encoding', 'base64')
         attachment.set_payload(
             attachment_str,
             charset=attachment.get_charset()
