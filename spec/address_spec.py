@@ -64,3 +64,9 @@ with context('normalizing address display name'):
         addr_str = 'Admin Name admin@example.com'
         normalized = normalize_display_address(addr_str)
         expect(normalized).to(equal(addr_str))
+
+    with it('must escape internal quotes if present'):
+        addr_str = 'SAYS "YES", PEPITA <pepita@example.com>'
+        expect(normalize_display_address(addr_str)).to(equal(
+            u'"SAYS \\"YES\\", PEPITA" <pepita@example.com>'
+        ))

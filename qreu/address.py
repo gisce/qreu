@@ -69,7 +69,9 @@ def normalize_display_address(addr_string):
         email = addr_part.strip('> ').strip()
 
         if name and not (name.startswith('"') and name.endswith('"')):
-            name = '"{}"'.format(name)
+            name = name.replace('"', r'\"')
+            if any(c in name for c in [',', ';', ':']):
+                name = '"{}"'.format(name)
 
         return '{} <{}>'.format(name, email)
     return addr_string  # If no angle brackets found, return as-is
