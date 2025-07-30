@@ -375,7 +375,7 @@ class Email(object):
 
         # Read bytes from buffer
         content = input_buff.getvalue() if isinstance(input_buff, (StringIO, BytesIO)) else input_buff.read()
-        if isinstance(content, six.text_type):  # Python 2
+        if isinstance(content, six.text_type):  # Check for text/unicode type in both Python 2 and 3
             content = content.encode('utf-8')
 
         # Base64 encode
