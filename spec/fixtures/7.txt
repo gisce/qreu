@@ -1,0 +1,3 @@
+From: "RAMOS ESCOLÀ, PEPITA" <pepitaramos@example.com>
+To: SAC <sac@example.com>
+CC: "Bústia General" <general@example.com>
