@@ -68,7 +68,8 @@ def normalize_display_address(addr_string):
         name = name_part.strip()
         email = addr_part.strip('> ').strip()
 
-        if name and not (name.startswith('"') and name.endswith('"')):
+        special_chars = {',', ';', '<', '>'}
+        if name and not (name.startswith('"') and name.endswith('"')) and any(char in name for char in special_chars):
             name = name.replace('"', r'\"')
             if any(c in name for c in [',', ';', ':']):
                 name = '"{}"'.format(name)
