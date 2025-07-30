@@ -363,40 +363,39 @@ class Email(object):
         :return:           True if Added, Exception if failed
         :rtype:            bool
         """
+        from os.path import basename
+        import base64
+        import mimetypes
+        from email.mime.application import MIMEApplication
 
         try:
-            # Try to get name from input if not provided
             filename = attname or input_buff.name
         except AttributeError:
             raise ValueError('Name of the attachment not provided')
-        from os.path import basename
-        import base64
 
+        # Read bytes from buffer
         content = input_buff.getvalue() if isinstance(input_buff, (StringIO, BytesIO)) else input_buff.read()
-        if six.PY2:
-            attachment_str = base64.encodestring(content)
-        else:
-            # TODO Revisar
-            attachment_str = content.decode('utf-8')
+        if isinstance(content, six.text_type):  # Python 2
+            content = content.encode('utf-8')
 
+        # Base64 encode
+        attachment_str = base64.b64encode(content).decode('ascii')
 
+        # Guess MIME type
         filetype = mimetypes.guess_type(filename)[0]
-        subtype = 'octet-stream'
+        maintype, subtype = 'application', 'octet-stream'
         if filetype:
-            splitedfiletype = filetype.split('/')[-1]
-            subtype = splitedfiletype
-        attachment = MIMEApplication('', _subtype=subtype)
+            maintype, subtype = filetype.split('/')
 
-        attachment.set_charset('utf-8')
+        # Create MIME part
+        attachment = MIMEApplication('', _subtype=subtype)
         attachment.add_header(
             'Content-Disposition',
             'attachment; filename="%s"' % self.remove_accent(u'{}'.format(basename(filename)))
         )
         attachment.add_header('Content-Transfer-Encoding', 'base64')
-        attachment.set_payload(
-            attachment_str,
-            charset=attachment.get_charset()
-        )
+        attachment.set_payload(attachment_str)
+
         self.email.attach(attachment)
         return True
 
@@ -542,7 +541,7 @@ class Email(object):
                 yield {
                     'type': part.get_content_type(),
                     'name': filename,
-                    'content': part.get_payload()
+                    'content': part.get_payload(decode=True)
                 }
 
     @property
