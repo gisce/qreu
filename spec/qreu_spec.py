@@ -19,7 +19,7 @@ from six import PY2
 with description('Parsing an Email'):
     with before.all:
         self.raw_messages = []
-        for fixture in range(0, 7):
+        for fixture in range(0, 9):
             with open('spec/fixtures/{0}.txt'.format(fixture)) as f:
                 self.raw_messages.append(f.read())
 
@@ -115,6 +115,17 @@ with description('Parsing an Email'):
     with it('should parse correctly address from weird header'):
         c = Email.parse(self.raw_messages[5])
         expect(c.from_).to(have_property('address', 'monica@example.com'))
+        expect(c.from_).to(have_property('display_name', u'Mónica de Test Example'))
+
+        c = Email.parse(self.raw_messages[8])
+        expect(c.from_).to(have_property('address', 'pepita@example.com'))
+        expect(c.from_).to(have_property('display_name', u'RAMOS ESCOLÀ, PEPITA'))
+
+    with it('should parse correctly address with accents'):
+        c = Email.parse(self.raw_messages[7])
+        expect(c.from_).to(have_property('display_name', u'RAMOS ESCOLÀ, PEPITA'))
+        expect(c.from_.address).to(equal('pepitaramos@example.com'))
+        expect(c.cc.addresses).to(contain_exactly(u'general@example.com'))
 
 with description("Creating an Email"):
     with context("empty"):

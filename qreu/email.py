@@ -466,7 +466,9 @@ class Email(object):
 
         :return: `address.Address`
         """
-        return address.parse(self.header('From', ''))
+        return address.parse(address.normalize_display_address(
+            self.header('From', ''))
+        )
 
     @property
     def to(self):

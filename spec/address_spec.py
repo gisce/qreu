@@ -1,5 +1,5 @@
 # coding=utf-8
-from qreu.address import parse, parse_list, AddressList, Address
+from qreu.address import parse, parse_list, AddressList, Address, normalize_display_address
 from expects import *
 
 
@@ -38,3 +38,35 @@ with description('address module'):
             expect((a1 + a2).addresses).to(contain_exactly(
                 'u@example.com', 'u2@example.com'
             ))
+
+with context('normalizing address display name'):
+    with it('must quote display name if it contains commas'):
+        addr_str = 'RAMOS ESCOLÀ, PEPITA <pepita@example.com>'
+        normalized = normalize_display_address(addr_str)
+        expect(normalized).to(equal(u'"RAMOS ESCOLÀ, PEPITA" <pepita@example.com>'))
+
+    with it('must not quote display name if already quoted'):
+        addr_str = u'"RAMOS ESCOLÀ, PEPITA" <pepita@example.com>'
+        normalized = normalize_display_address(addr_str)
+        expect(normalized).to(equal(addr_str))
+
+    with it('must not alter address without display name'):
+        addr_str = 'pepita@example.com'
+        normalized = normalize_display_address(addr_str)
+        expect(normalized).to(equal(addr_str))
+
+    with it('must quote display name with semicolon'):
+        addr_str = 'Admin; Name <admin@example.com>'
+        normalized = normalize_display_address(addr_str)
+        expect(normalized).to(equal('"Admin; Name" <admin@example.com>'))
+
+    with it('must ignore address without angle brackets'):
+        addr_str = 'Admin Name admin@example.com'
+        normalized = normalize_display_address(addr_str)
+        expect(normalized).to(equal(addr_str))
+
+    with it('must escape internal quotes if present'):
+        addr_str = 'SAYS "YES", PEPITA <pepita@example.com>'
+        expect(normalize_display_address(addr_str)).to(equal(
+            u'"SAYS \\"YES\\", PEPITA" <pepita@example.com>'
+        ))
