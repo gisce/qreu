@@ -540,10 +540,14 @@ class Email(object):
         for part in self.email.walk():
             filename = part.get_filename()
             if filename:
+                # Removed part.get_payload(decode=True)
+                # If we use decode=True content is b64decoded which is a raw content
+                payload = part.get_payload()
+                payload = payload.decode() if isinstance(payload, bytes) else payload
                 yield {
                     'type': part.get_content_type(),
                     'name': filename,
-                    'content': part.get_payload(decode=True)
+                    'content': payload
                 }
 
     @property
