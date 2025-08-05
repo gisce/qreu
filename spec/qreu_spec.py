@@ -299,9 +299,9 @@ with description("Creating an Email"):
             expect(files).to(equal([f_name, f_name]))
             for attachment in e.attachments:
                 filename = attachment['name']
-                filecontent = attachment['content'].decode('utf-8')
+                filecontent = attachment['content']
                 with open(f_path, 'rb') as f:
-                    attachment_str = f.read().decode('utf-8')
+                    attachment_str = base64.b64encode(f.read()).decode('utf-8')
                 expect(filecontent).to(equal(attachment_str))
 
         with it('must add an iostring as attachment to body'):
@@ -314,11 +314,11 @@ with description("Creating an Email"):
                 f_data = f.read()
 
             input_iostr = BytesIO(f_data)
-            check_str = f_data.decode('utf-8')
+            check_str = base64.b64encode(f_data).decode('utf-8')
             e.add_attachment(input_buff=input_iostr, attname=f_name)
             for attachment in e.attachments:
                 filename = attachment['name']
-                filecontent = attachment['content'].decode('utf-8')
+                filecontent = attachment['content']
                 expect(filecontent).to(equal(check_str))
 
         with it('must raise an exception adding an unexisting attachment'):
