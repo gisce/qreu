@@ -16,13 +16,13 @@ permissions:
 
 jobs:
   upload-to-pypi:
-    runs-on: [self-hosted, Keroberos]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11' 
+          python-version: '3.11'
 
       - name: Get tag
         id: tag
@@ -30,7 +30,14 @@ jobs:
         with:
           strip_v: false
 
+      - name: Run setup
+        run: |
+          pip install -e .
+          python setup.py sdist
+
       - name: Creating a realease/pre-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUB_MASTER_PUSH_TOKEN }}
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
@@ -41,6 +48,6 @@ jobs:
 
       - name: Publish a Python distribution to PyPI
         if: ${{ contains(github.ref, '-rc') }} == false
-        uses: conchylicultor/pypi-build-publish@v1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          pypi-token: ${{ secrets.PYPI_MASTER_TOKEN }}
+          password: ${{ secrets.PYPI_MASTER_TOKEN }}
