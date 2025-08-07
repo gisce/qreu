@@ -379,7 +379,12 @@ class Email(object):
             content = content.encode('utf-8')
 
         # Base64 encode
-        attachment_str = base64.b64encode(content).decode('ascii')
+
+        # attachment_str = base64.b64encode(content).decode('ascii')
+        if six.PY2:
+            attachment_str = base64.encodestring(content).decode('ascii')
+        else:
+            attachment_str = base64.encodebytes(content).decode('ascii')
 
         # Guess MIME type
         filetype = mimetypes.guess_type(filename)[0]

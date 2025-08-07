@@ -1,4 +1,6 @@
 # coding=utf-8
+import six
+
 from qreu import Email, address
 from qreu.address import AddressList, Address
 from qreu.sendcontext import Sender
@@ -301,7 +303,11 @@ with description("Creating an Email"):
                 filename = attachment['name']
                 filecontent = attachment['content']
                 with open(f_path, 'rb') as f:
-                    attachment_str = base64.b64encode(f.read()).decode('utf-8')
+                    # attachment_str = base64.b64encode(f.read()).decode('utf-8')
+                    if six.PY2:
+                        attachment_str = base64.encodestring(f.read()).decode('utf-8')
+                    else:
+                        attachment_str = base64.encodebytes(f.read()).decode('utf-8')
                 expect(filecontent).to(equal(attachment_str))
 
         with it('must add an iostring as attachment to body'):
@@ -314,7 +320,11 @@ with description("Creating an Email"):
                 f_data = f.read()
 
             input_iostr = BytesIO(f_data)
-            check_str = base64.b64encode(f_data).decode('utf-8')
+            # check_str = base64.b64encode(f_data).decode('utf-8')
+            if six.PY2:
+                check_str = base64.encodestring(f_data).decode('utf-8')
+            else:
+                check_str = base64.encodebytes(f_data).decode('utf-8')
             e.add_attachment(input_buff=input_iostr, attname=f_name)
             for attachment in e.attachments:
                 filename = attachment['name']
