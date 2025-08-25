@@ -398,7 +398,6 @@ class Email(object):
             'Content-Disposition',
             'attachment; filename="%s"' % self.remove_accent(u'{}'.format(basename(filename)))
         )
-        attachment.add_header('Content-Transfer-Encoding', 'base64')
         attachment.set_payload(attachment_str)
 
         self.email.attach(attachment)
