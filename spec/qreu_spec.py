@@ -299,6 +299,10 @@ with description("Creating an Email"):
                 expect(e.add_attachment(input_buff=f)).to(be_true)
             files = [attachment['name'] for attachment in e.attachments]
             expect(files).to(equal([f_name, f_name]))
+            for part in e.email.walk():
+                if part.get_all('Content-Transfer-Encoding'):
+                    expect(len(part.get_all('Content-Transfer-Encoding'))).to(equal(1))
+                    expect(part.get_all('Content-Transfer-Encoding')[0]).to(equal('base64'))
             for attachment in e.attachments:
                 filename = attachment['name']
                 filecontent = attachment['content']
