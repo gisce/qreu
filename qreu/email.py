@@ -388,6 +388,21 @@ class Email(object):
 
         # Guess MIME type
         filetype = mimetypes.guess_type(filename)[0]
+        
+        # Ensure common Microsoft Office MIME types are available (especially for Python 2.7)
+        if not filetype:
+            office_extensions = {
+                '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                '.doc': 'application/msword',
+                '.xls': 'application/vnd.ms-excel',
+                '.ppt': 'application/vnd.ms-powerpoint'
+            }
+            file_ext = filename.lower().split('.')[-1] if '.' in filename else ''
+            if '.' + file_ext in office_extensions:
+                filetype = office_extensions['.' + file_ext]
+        
         maintype, subtype = 'application', 'octet-stream'
         if filetype:
             maintype, subtype = filetype.split('/')
