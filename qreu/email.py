@@ -69,32 +69,11 @@ def get_body_html(html):
 
 class Email(object):
     """
-    Email object for composing and manipulating email messages.
-    
-    Provides a high-level interface to Python's email module with 
-    Python 2.7 and 3.x compatibility.
+    Correu object
 
     :param raw_message: Raw string message
-    :type raw_message: str or unicode
-    :param subject: Email subject line
-    :type subject: str or unicode  
-    :param from: Sender email address
-    :type from: str or unicode
-    :param to: Recipient email address(es)
-    :type to: str or unicode or list
-    :param cc: Carbon copy email address(es)
-    :type cc: str or unicode or list
-    :param bcc: Blind carbon copy email address(es)
-    :type bcc: str or unicode or list
-    :param body_text: Plain text body content
-    :type body_text: str or unicode
-    :param body_html: HTML body content  
-    :type body_html: str or unicode
-    :param date: Email date
-    :type date: datetime.datetime
     """
     def __init__(self, **kwargs):
-        # type: (**Any) -> None
         self.email = MIMEMultipart()
         self.bccs = []
         for header_name in ['subject', 'from', 'to', 'cc', 'bcc']:
@@ -111,14 +90,9 @@ class Email(object):
 
     @staticmethod
     def _format_date(date_time):
-        # type: (datetime) -> str
         """
-        Parse a datetime object to a string with the standard Date format.
-        
-        :param date_time: DateTime object to format, or string to pass through
-        :type date_time: datetime.datetime or str or unicode
-        :return: Formatted date string suitable for email Date header
-        :rtype: str
+        Parses a datetime object to a string with the standard Datetime prompt
+        If no datetime provided, returns the parameter
         """
         if not isinstance(date_time, datetime):
             return date_time
@@ -136,26 +110,13 @@ class Email(object):
 
     @staticmethod
     def parse(raw_message):
-        # type: (str) -> Email
-        """
-        Parse a raw email message string into an Email object.
-        
-        :param raw_message: Raw email message as string
-        :type raw_message: str or unicode
-        :return: Parsed Email object
-        :rtype: Email
-        """
         mail = Email()
         mail.email = email.message_from_string(raw_message)
         return mail
 
     def send(self):
-        # type: () -> Any
         """
-        Send this email using the current sender context.
-        
-        :return: Result from the sendmail operation
-        :rtype: Any
+        Send himself using the current sendercontext
         """
         return get_current_sender().sendmail(self)
 

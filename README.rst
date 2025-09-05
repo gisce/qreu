@@ -9,7 +9,7 @@ Qreu
 
 Email Wrapper to `python email module <https://docs.python.org/library/email.html>`_
 
-**Supported Python Versions:** 2.7, 3.5, 3.8, 3.9, 3.10, 3.11, 3.12
+**Supported Python Versions:** 2.7, 3.11
 
 Installation
 ------------
@@ -26,12 +26,20 @@ Basic Usage
     # -*- coding: utf-8 -*-
     from qreu import Email
     
-    # Create a simple email
-    email = Email()
-    email.set_from('sender@example.com')
-    email.set_to(['recipient@example.com'])
-    email.set_subject('Hello from Qreu!')
-    email.set_text('This is a plain text message.')
+    # Create a simple email using constructor
+    email = Email(
+        subject='Hello from Qreu!',
+        **{'from': 'sender@example.com'},  # Use dict for 'from' keyword
+        to=['recipient@example.com'],
+        body_text='This is a plain text message.'
+    )
+    
+    # Alternative: Create email step by step
+    email2 = Email()
+    email2.add_header('from', 'sender@example.com')
+    email2.add_header('to', 'recipient@example.com')
+    email2.add_header('subject', 'Hello from Qreu!')
+    email2.add_body_text(body_plain='This is a plain text message.')
     
     # Send the email (requires proper SMTP configuration)
     # email.send()
@@ -39,7 +47,7 @@ Basic Usage
 Features
 --------
 
-- **Python 2.7 and 3.x compatibility** - Works seamlessly across Python versions
+- **Python 2.7 and 3.11 compatibility** - Works seamlessly across these specific Python versions
 - **Email composition** - Easy creation of plain text and HTML emails  
 - **Attachment support** - Add files to your emails
 - **Address parsing** - Handle email addresses with proper validation

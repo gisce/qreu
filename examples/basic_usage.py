@@ -3,7 +3,7 @@
 """
 Example script demonstrating qreu email library usage.
 
-This example shows Python 2.7 and 3.x compatible usage patterns.
+This example shows Python 2.7 and 3.11 compatible usage patterns.
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
@@ -16,48 +16,48 @@ from qreu.address import Address
 
 
 def main():
-    # type: () -> None
     """Main example function demonstrating qreu usage."""
     print("Qreu Email Library Example")
     print("Python version: {0}".format(sys.version))
     print("-" * 40)
     
-    # Create a simple email
-    print("\n1. Creating a simple text email:")
-    email = Email(
-        subject="Hello from Qreu!",
-        body_text="This is a plain text email created with qreu library.",
-        date=datetime.now()
-    )
-    email.add_header('from', "sender@example.com")
-    email.add_header('to', "recipient@example.com")
+    # Create a simple email using constructor
+    print("\n1. Creating a simple text email using constructor:")
+    email = Email(**{
+        'subject': "Hello from Qreu!",
+        'from': "sender@example.com",
+        'to': ["recipient@example.com"],
+        'body_text': "This is a plain text email created with qreu library.",
+        'date': datetime.now()
+    })
     
     print("Subject:", email.subject)
     print("From:", email.from_)
     print("To:", email.to)
     
-    # Create an email with HTML content
-    print("\n2. Creating an HTML email:")
-    html_content = """
-    <html>
-    <body>
-        <h1>Hello from Qreu!</h1>
-        <p>This is an <strong>HTML email</strong> with formatting.</p>
-        <ul>
-            <li>Python 2.7 compatible</li>
-            <li>Python 3.x compatible</li>
-            <li>Easy to use</li>
-        </ul>
-    </body>
-    </html>
-    """
+    # Create an email step by step using add_header
+    print("\n2. Creating an HTML email using add_header:")
+    html_content = """<html>
+<body>
+    <h1>Hello from Qreu!</h1>
+    <p>This is an <strong>HTML email</strong> with formatting.</p>
+    <ul>
+        <li>Python 2.7 compatible</li>
+        <li>Python 3.11 compatible</li>
+        <li>Easy to use</li>
+    </ul>
+</body>
+</html>"""
     
     html_email = Email()
     html_email.add_header('subject', "HTML Email Example")
     html_email.add_header('from', "sender@example.com")
     html_email.add_header('to', ["recipient1@example.com", "recipient2@example.com"])
     html_email.add_header('cc', "cc@example.com")
-    html_email.add_body_text(body_html=html_content, body_plain="This is the plain text version.")
+    html_email.add_body_text(
+        body_plain="This is the plain text version.",
+        body_html=html_content
+    )
     
     print("Subject:", html_email.subject)
     print("Recipients:", len(html_email.to), "addresses")

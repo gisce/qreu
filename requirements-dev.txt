@@ -2,9 +2,3 @@ mamba==0.9.3;python_version<="2.7.18"
 mamba;python_version>"2.7.18"
 expects
 mock
-# Development and code quality tools (Python 2.7 compatible versions)
-pre-commit>=1.21.0,<3.0.0
-flake8>=3.9.0,<4.0.0;python_version<="2.7.18"
-flake8>=4.0.0;python_version>"2.7.18"
-isort>=4.3.21,<5.0.0;python_version<="2.7.18"
-isort>=5.0.0;python_version>"2.7.18"
