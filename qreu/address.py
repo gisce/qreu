@@ -9,8 +9,14 @@ try:
     from collections import UserList
 except ImportError:
     from UserList import UserList
-from email.utils import getaddresses, parseaddr
+from email.utils import getaddresses as getaddresses_email, parseaddr
 
+def getaddresses(fieldvalues):
+    """fieldvalues: Iterable[str]"""
+    if isinstance(fieldvalues, six.string_types):
+        fieldvalues = [fieldvalues]
+    fixed_fieldvalues = [x.replace(";", ",") for x in fieldvalues]
+    return getaddresses_email(fixed_fieldvalues)
 
 BaseAddress = namedtuple('Address', ['display_name', 'address'])
 
