@@ -87,7 +87,9 @@ This is a test message body.
     print("\n5. Python 2/3 compatibility features:")
     test_subject = "Test with unicode: àáâãäå"
     compat_email = Email(subject=test_subject)
-    print("Unicode subject handled correctly:", compat_email.subject)
+    if compat_email.subject != test_subject:
+        raise AssertionError("Unicode subject was not preserved")
+    print("Unicode subject handled correctly")
     
     print("\nExample completed successfully!")
 

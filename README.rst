@@ -27,12 +27,12 @@ Basic Usage
     from qreu import Email
     
     # Create a simple email using constructor
-    email = Email(
-        subject='Hello from Qreu!',
-        **{'from': 'sender@example.com'},  # Use dict for 'from' keyword
-        to=['recipient@example.com'],
-        body_text='This is a plain text message.'
-    )
+    email = Email(**{
+        'subject': 'Hello from Qreu!',
+        'from': 'sender@example.com',
+        'to': ['recipient@example.com'],
+        'body_text': 'This is a plain text message.'
+    })
     
     # Alternative: Create email step by step
     email2 = Email()
