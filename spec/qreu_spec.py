@@ -355,6 +355,9 @@ with description("Creating an Email"):
             expect(attachments[0].get('Content-ID')).to(
                 equal('<logo-1@example>')
             )
+            expect(attachments[0].get('Content-Transfer-Encoding')).to(
+                equal('base64')
+            )
             expect(attachments[0].get_content_type()).to(equal('image/png'))
 
         with it('must raise an exception adding an unexisting attachment'):

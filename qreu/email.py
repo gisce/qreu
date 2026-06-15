@@ -423,6 +423,7 @@ class Email(object):
         if content_id:
             attachment.add_header('Content-ID', '<%s>' % content_id)
         attachment.set_payload(attachment_str)
+        attachment.add_header('Content-Transfer-Encoding', 'base64')
 
         self.email.attach(attachment)
         return True
