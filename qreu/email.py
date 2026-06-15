@@ -370,7 +370,6 @@ class Email(object):
         """
         from os.path import basename
         import base64
-        import mimetypes
 
         try:
             filename = attname or input_buff.name
