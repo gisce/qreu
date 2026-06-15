@@ -335,6 +335,28 @@ with description("Creating an Email"):
                 filecontent = attachment['content']
                 expect(filecontent).to(equal(check_str))
 
+        with it('must add an inline attachment with content id'):
+            from io import BytesIO
+            e = Email()
+            e.add_attachment(
+                input_buff=BytesIO(b'testContent'),
+                attname='logo.png',
+                disposition='inline',
+                content_id='logo-1@example'
+            )
+            attachments = [
+                part for part in e.email.walk()
+                if part.get_filename() == 'logo.png'
+            ]
+            expect(len(attachments)).to(equal(1))
+            expect(attachments[0].get('Content-Disposition')).to(
+                equal('inline; filename="logo.png"')
+            )
+            expect(attachments[0].get('Content-ID')).to(
+                equal('<logo-1@example>')
+            )
+            expect(attachments[0].get_content_type()).to(equal('image/png'))
+
         with it('must raise an exception adding an unexisting attachment'):
             def call_wrongly():
                 e = Email()
@@ -550,4 +572,3 @@ with description('Filename without accents'):
         expected_file_name_2 = u"hola.pdf"
         new_filename_2 = e.remove_accent(basename(original_filename_2))
         expect(new_filename_2).to(equal(expected_file_name_2))
-
