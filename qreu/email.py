@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import email
 import mimetypes
 from email.header import decode_header, Header
-from email.mime.application import MIMEApplication
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
@@ -353,20 +353,23 @@ class Email(object):
         return unidecode(text)
 
 
-    def add_attachment(self, input_buff, attname=False):
+    def add_attachment(self, input_buff, attname=False, disposition='attachment',
+                       content_id=None):
         """
         Add an attachment file to the email
         :param input_buff:  Buffer of the file to attach (something to read)
         :type input_buff:   Buffer
         :param attname:    Name of the attachment
         :type attname:     str
+        :param disposition: Content-Disposition type
+        :type disposition: str
+        :param content_id: Content-ID header value, without surrounding <>
+        :type content_id:  str
         :return:           True if Added, Exception if failed
         :rtype:            bool
         """
         from os.path import basename
         import base64
-        import mimetypes
-        from email.mime.application import MIMEApplication
 
         try:
             filename = attname or input_buff.name
@@ -408,12 +411,18 @@ class Email(object):
             maintype, subtype = filetype.split('/')
 
         # Create MIME part
-        attachment = MIMEApplication('', _subtype=subtype)
+        attachment = MIMEBase(maintype, subtype)
         attachment.add_header(
             'Content-Disposition',
-            'attachment; filename="%s"' % self.remove_accent(u'{}'.format(basename(filename)))
+            '%s; filename="%s"' % (
+                disposition,
+                self.remove_accent(u'{}'.format(basename(filename)))
+            )
         )
+        if content_id:
+            attachment.add_header('Content-ID', '<%s>' % content_id)
         attachment.set_payload(attachment_str)
+        attachment.add_header('Content-Transfer-Encoding', 'base64')
 
         self.email.attach(attachment)
         return True
