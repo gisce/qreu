@@ -110,7 +110,7 @@ class SMTPSender(Sender):
                 else:
                     raise
         if self._user and self._passwd:
-            self._connection.login(user=self._user, password=self._passwd)
+            self._connection.login(user=self._user, password=str(self._passwd))
         return super(SMTPSender, self).__enter__()
 
     def __exit__(self, etype, evalue, etraceback):
